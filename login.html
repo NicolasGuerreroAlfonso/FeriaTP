@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <link rel="stylesheet" href="login.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+</head>
+<body>
+
+  <div class="auth-scene">
+    <div class="auth-wrapper">
+      <img src="logo.png" alt="Aula Activa" class="auth-logo" />
+    <div class="auth-card">
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signin" onclick="switchTab('signin')">Iniciar Sesión</button>
+        <button class="auth-tab inactive" id="tab-signup" onclick="switchTab('signup')">Registrarse</button>
+      </div>
+
+      <div class="auth-body">
+
+        <div class="form-panel" id="signin-form">
+          <div class="input-group">
+            <i class="ti ti-user"></i>
+            <input type="email" placeholder="gmail" />
+          </div>
+          <div class="input-group">
+            <i class="ti ti-lock"></i>
+            <input type="password" placeholder="Contraseña" />
+          </div>
+          <div class="auth-options">
+            <label class="remember">
+              <input type="checkbox" checked />
+              recordarme
+            </label>
+            <a class="forgot" href="#">Olvidé mi contraseña</a>
+          </div>
+        </div>
+
+        <div class="form-panel hidden" id="signup-form">
+          <div class="input-group">
+            <i class="ti ti-user"></i>
+            <input type="text" placeholder="Nombre Completo" />
+          </div>
+          <div class="input-group">
+            <i class="ti ti-mail"></i>
+            <input type="email" placeholder="Correo Electrónico" />
+          </div>
+          <div class="input-group">
+            <i class="ti ti-lock"></i>
+            <input type="password" placeholder="Contraseña" />
+          </div>
+          <div class="auth-options">
+            <label class="remember">
+              <input type="checkbox" />
+              Acepto los términos
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="login-btn" id="main-btn">Iniciar Sesión</button>
+
+    </div>
+    </div>
+  </div>
+
+  <script src="login-script.js"></script>
+</body>
+</html>
