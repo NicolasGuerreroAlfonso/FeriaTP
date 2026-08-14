@@ -594,3 +594,28 @@ h3 { font-size: 1.1rem; font-weight: 700; }
   .nosotros-cards  { grid-template-columns: 1fr; }
   .footer-inner    { grid-template-columns: 1fr; }
 }
+
+.nav-juegos {
+  background: linear-gradient(135deg, #ff0000 0%, #d97706 100%);
+  color: white !important;
+  padding: 10px 22px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-juegos:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+}
+
+.nav-juegos::before {
+  content: "🎮";
+  font-size: 16px;
+}
+
