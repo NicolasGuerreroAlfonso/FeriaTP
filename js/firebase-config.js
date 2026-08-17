@@ -4,13 +4,12 @@
 // 3. Guarda este archivo y sube el proyecto a GitHub — no necesitas tocar nada más.
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCRD15-HzvmCvt5dOnEgsGSTkE5AN-16DM",
-  authDomain: "aulaactiva-ca551.firebaseapp.com",
-  projectId: "aulaactiva-ca551",
-  storageBucket: "aulaactiva-ca551.firebasestorage.app",
-  messagingSenderId: "797030185664",
-  appId: "1:797030185664:web:10f7634bf3feb7f1248b25",
-  measurementId: "G-59W4K0K24C"
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_PROYECTO.firebaseapp.com",
+  projectId: "TU_PROYECTO",
+  storageBucket: "TU_PROYECTO.appspot.com",
+  messagingSenderId: "TU_SENDER_ID",
+  appId: "TU_APP_ID"
 };
 
 firebase.initializeApp(firebaseConfig);
