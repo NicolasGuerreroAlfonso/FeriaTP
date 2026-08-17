@@ -1,16 +1,255 @@
-// 1. Ve a console.firebase.google.com → tu proyecto → ícono de engranaje →
-//    "Configuración del proyecto" → "Tus apps" → app web (</>) y copia estos valores ahí.
-// 2. Reemplaza TODO lo de abajo por lo que te muestre Firebase.
-// 3. Guarda este archivo y sube el proyecto a GitHub — no necesitas tocar nada más.
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula Activa – Menos distracción, más enfoque</title>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCRD15-HzvmCvt5dOnEgsGSTkE5AN-16DM",
-  authDomain: "aulaactiva-ca551.firebaseapp.com",
-  projectId: "aulaactiva-ca551",
-  storageBucket: "aulaactiva-ca551.firebasestorage.app",
-  messagingSenderId: "797030185664",
-  appId: "1:797030185664:web:10f7634bf3feb7f1248b25",
-  measurementId: "G-59W4K0K24C"
-};
+<header class="navbar">
+  <div class="container nav-inner">
+    <img src="assets/logo.svg" alt="Aula Activa" class="nav-logo">
+    <nav class="nav-links">
+      <a href="#inicio">Inicio</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="#cursos">Cursos</a>
+      <a href="#testimonios">Testimonios</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <a href="login.html" class="btn-nav">Ingresar</a>
+    <button class="hamburger" id="hamburger" aria-label="Menú">&#9776;</button>
+  </div>
+  <div class="mobile-menu hidden" id="mobile-menu">
+    <a href="#inicio">Inicio</a>
+    <a href="#nosotros">Nosotros</a>
+    <a href="#cursos">Cursos</a>
+    <a href="#testimonios">Testimonios</a>
+    <a href="#contacto">Contacto</a>
+    <a href="login.html" class="btn-mobile">Ingresar</a>
+  </div>
+</header>
 
-firebase.initializeApp(firebaseConfig);
+<section class="hero" id="inicio">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <span class="eyebrow">Proyecto Tecnomatrix</span>
+      <h1>Menos distracción,<br><span class="highlight">más enfoque.</span></h1>
+      <p>Aula Activa transforma la forma en que los estudiantes aprenden: pausas activas, pomodoro, desafíos y seguimiento en tiempo real, para que la concentración deje de ser un problema.</p>
+      <div class="hero-btns">
+        <a href="login.html" class="btn-primary">Comenzar gratis</a>
+        <a href="#cursos" class="btn-secondary">Ver cursos</a>
+      </div>
+    </div>
+
+    <div class="hero-image card-index timer-card">
+      <div class="widget-tabs">
+        <button class="widget-tab active" id="modeFocus" data-mode="focus">Enfoque · 25:00</button>
+        <button class="widget-tab" id="modeBreak" data-mode="break">Pausa activa · 5:00</button>
+      </div>
+      <div class="timer-face">
+        <svg class="timer-ring" viewBox="0 0 200 200">
+          <circle class="ring-bg" cx="100" cy="100" r="90"/>
+          <circle class="ring-progress" id="ringProgress" cx="100" cy="100" r="90"/>
+        </svg>
+        <div class="timer-time mono" id="timerDisplay">25:00</div>
+      </div>
+      <div class="timer-controls">
+        <button class="btn-primary" id="timerStart" style="padding:9px 18px;font-size:13px;">Iniciar</button>
+        <button class="btn-secondary" id="timerReset" style="padding:9px 18px;font-size:13px;color:var(--ink);border-color:var(--ink);">Reiniciar</button>
+      </div>
+      <p class="timer-caption" id="timerCaption">Pruébalo — no necesitas cuenta</p>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="container stats-grid">
+    <div class="stat-card"><span class="stat-num">7</span><span class="stat-label">Bloques de estudio</span></div>
+    <div class="stat-card"><span class="stat-num">6</span><span class="stat-label">Cursos disponibles</span></div>
+    <div class="stat-card"><span class="stat-num">5</span><span class="stat-label">Integrantes Tecnomatrix</span></div>
+    <div class="stat-card"><span class="stat-num">6</span><span class="stat-label">Meses de desarrollo</span></div>
+  </div>
+</section>
+
+<section class="section" id="nosotros">
+  <div class="container nosotros-inner reveal">
+    <div class="nosotros-text">
+      <span class="eyebrow eyebrow--green">¿Quiénes somos?</span>
+      <h2>Una plataforma diseñada para el <span class="highlight-blue">estudiante real</span></h2>
+      <p>Sabemos que el mundo digital está lleno de distracciones. Por eso creamos Aula Activa: un espacio donde cada herramienta, cada curso y cada recurso está pensado para ayudarte a enfocarte, avanzar y conseguir resultados concretos.</p>
+      <ul class="features-list">
+        <li><span class="feat-icon feat-yellow">💡</span> Aprendizaje activo y personalizado</li>
+        <li><span class="feat-icon feat-blue">🎯</span> Metas claras y seguimiento de progreso</li>
+        <li><span class="feat-icon feat-green">✅</span> Contenido libre de distracciones</li>
+        <li><span class="feat-icon feat-pink">🚀</span> Comunidad de apoyo entre estudiantes</li>
+      </ul>
+    </div>
+    <div class="nosotros-cards">
+      <div class="info-card card-yellow"><div class="card-icon">📚</div><h3>Aprende a tu ritmo</h3><p>Accede a los cursos cuando quieras y desde cualquier dispositivo.</p></div>
+      <div class="info-card card-blue"><div class="card-icon">🏆</div><h3>Logros y certificados</h3><p>Obtén reconocimientos por cada curso completado.</p></div>
+      <div class="info-card card-green"><div class="card-icon">👨‍🏫</div><h3>Docentes expertos</h3><p>Aprende con profesionales con experiencia real en cada área.</p></div>
+      <div class="info-card card-coral"><div class="card-icon">📊</div><h3>Seguimiento de progreso</h3><p>Visualiza tu avance y mantente motivado en todo momento.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section cursos" id="cursos">
+  <div class="container reveal">
+    <div class="section-header">
+      <span class="eyebrow eyebrow--blue" style="color:var(--pencil);">Lo que ofrecemos</span>
+      <h2 style="color:var(--chalk);">Cursos para <span class="highlight-yellow">potenciar tu aprendizaje</span></h2>
+      <p>Desde habilidades básicas hasta técnicas avanzadas, tenemos el curso que necesitas.</p>
+    </div>
+    <div class="cursos-grid">
+      <div class="curso-card">
+        <div class="curso-badge badge-blue">Más popular</div>
+        <div class="curso-icon">🧠</div>
+        <h3>Técnicas de estudio efectivo</h3>
+        <p>Aprende métodos probados para retener más información en menos tiempo.</p>
+        <div class="curso-meta"><span>⏱ 6 semanas</span><span>⭐ 4.9</span></div>
+        <a href="curso.html?id=estudio" class="btn-curso">Ver curso</a>
+      </div>
+      <div class="curso-card">
+        <div class="curso-badge badge-green">Nuevo</div>
+        <div class="curso-icon">📱</div>
+        <h3>Gestión del tiempo digital</h3>
+        <p>Controla el uso de dispositivos y recupera tu concentración.</p>
+        <div class="curso-meta"><span>⏱ 4 semanas</span><span>⭐ 4.8</span></div>
+        <a href="curso.html?id=tiempo" class="btn-curso">Ver curso</a>
+      </div>
+      <div class="curso-card">
+        <div class="curso-icon">✍️</div>
+        <h3>Escritura y comunicación</h3>
+        <p>Desarrolla habilidades de expresión escrita y oral para cualquier contexto.</p>
+        <div class="curso-meta"><span>⏱ 8 semanas</span><span>⭐ 4.7</span></div>
+        <a href="curso.html?id=comunicacion" class="btn-curso">Ver curso</a>
+      </div>
+      <div class="curso-card">
+        <div class="curso-badge badge-yellow">Destacado</div>
+        <div class="curso-icon">🔢</div>
+        <h3>Matemáticas desde cero</h3>
+        <p>Refuerza tus bases matemáticas con ejercicios prácticos y dinámicos.</p>
+        <div class="curso-meta"><span>⏱ 10 semanas</span><span>⭐ 4.9</span></div>
+        <a href="curso.html?id=matematicas" class="btn-curso">Ver curso</a>
+      </div>
+      <div class="curso-card">
+        <div class="curso-icon">🌍</div>
+        <h3>Inglés para el mundo real</h3>
+        <p>Aprende inglés aplicado a situaciones cotidianas y profesionales.</p>
+        <div class="curso-meta"><span>⏱ 12 semanas</span><span>⭐ 4.8</span></div>
+        <a href="curso.html?id=ingles" class="btn-curso">Ver curso</a>
+      </div>
+      <div class="curso-card">
+        <div class="curso-icon">💻</div>
+        <h3>Introducción a la programación</h3>
+        <p>Da tus primeros pasos en el mundo del código de forma práctica y divertida.</p>
+        <div class="curso-meta"><span>⏱ 8 semanas</span><span>⭐ 4.7</span></div>
+        <a href="curso.html?id=programacion" class="btn-curso">Ver curso</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="testimonios">
+  <div class="container reveal">
+    <div class="section-header">
+      <span class="eyebrow eyebrow--green">Lo que dicen</span>
+      <h2>Estudiantes que ya <span class="highlight">cambiaron su motivación</span></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p>"Aula Activa cambió completamente mi forma de estudiar. Ahora rindo el doble en la mitad del tiempo."</p>
+        <div class="testi-author"><div class="avatar av-blue">ER</div><div><strong>Elian Romero</strong><span>Estudiante AML</span></div></div>
+      </div>
+      <div class="testi-card testi-featured">
+        <div class="stars">★★★★★</div>
+        <p>"Los cursos son claros, dinámicos y sin relleno. Aprendí más aquí en 2 meses que en un año por mi cuenta."</p>
+        <div class="testi-author"><div class="avatar av-green">OR</div><div><strong>Owen Rojas</strong><span>Estudiante AML</span></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p>"Por fin una plataforma que entiende que los estudiantes necesitamos estructura y motivación a la vez."</p>
+        <div class="testi-author"><div class="avatar av-yellow">DM</div><div><strong>Diego Manchego</strong><span>Estudiante AML</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container cta-inner">
+    <h2>¿Listo para enfocarte y avanzar?</h2>
+    <p>Únete para avanzar en tu progreso de motivación con Aula Activa.</p>
+    <a href="login.html" class="btn-cta">Comenzar ahora — es gratis</a>
+  </div>
+</section>
+
+<section class="section" id="contacto">
+  <div class="container contacto-inner reveal">
+    <div class="contacto-text">
+      <span class="eyebrow eyebrow--blue">Contáctanos</span>
+      <h2>¿Tienes alguna pregunta?</h2>
+      <p>Estamos aquí para ayudarte. Escríbenos y te responderemos lo antes posible.</p>
+      <div class="contact-info">
+        <div class="contact-item">📧 <span>lostecnomatrix@gmail.com</span></div>
+        <div class="contact-item">📱 <span>+56 9 1234 5678</span></div>
+        <div class="contact-item">📍 <span>Santiago, Chile</span></div>
+      </div>
+    </div>
+    <form class="contact-form" id="contact-form">
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" placeholder="Tu nombre completo" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" placeholder="tu@correo.com" required>
+      </div>
+      <div class="form-group">
+        <label for="mensaje">Mensaje</label>
+        <textarea id="mensaje" rows="4" placeholder="¿En qué podemos ayudarte?" required></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Enviar mensaje</button>
+      <p class="form-success hidden" id="form-success">✅ ¡Mensaje enviado! Te contactaremos pronto.</p>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="assets/logo.svg" alt="Aula Activa" class="footer-logo">
+      <p>Menos distracción, más enfoque.<br>Más acción, mejores resultados.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Plataforma</h4>
+      <a href="#cursos">Cursos</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="login.html">Ingresar</a>
+    </div>
+    <div class="footer-links">
+      <h4>Soporte</h4>
+      <a href="#contacto">Contacto</a>
+      <a href="#">Preguntas frecuentes</a>
+      <a href="#">Política de privacidad</a>
+    </div>
+    <div class="footer-links">
+      <h4>Síguenos</h4>
+      <a href="#">Instagram</a>
+      <a href="#">Facebook</a>
+      <a href="#">YouTube</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Aula Activa — Tecnomatrix. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script src="js/site.js"></script>
+</body>
+</html>
