@@ -2,7 +2,7 @@
   var authViews = document.getElementById('authViews');
   if (!authViews) return; // only runs on login.html
 
-  var currentUser = null; // {uid, name, email, role, sessionsCompleted}
+  var currentUser = null; // {uid, name, username, role, sessionsCompleted}
 
   var profileView = document.getElementById('profileView');
   var authTitle = document.getElementById('authTitle');
@@ -14,6 +14,12 @@
 
   var auth = firebase.auth();
   var db = firebase.firestore();
+
+  // Firebase Auth needs an email; las cuentas del proyecto solo piden "usuario",
+  // así que armamos un correo interno a partir del nombre de usuario.
+  function usernameToEmail(username){
+    return username.replace(/[^a-z0-9._-]/g, '') + '@aula-activa.local';
+  }
 
   function clearMsg(){ formMsg.classList.remove('show','error','ok'); formMsg.textContent=''; }
   function showMsg(text, type){ formMsg.textContent = text; formMsg.classList.add('show', type); }
@@ -40,11 +46,11 @@
 
   function friendlyError(err){
     var map = {
-      'auth/email-already-in-use': 'Ese correo ya está registrado. Intenta iniciar sesión.',
+      'auth/email-already-in-use': 'Ese usuario ya existe. Intenta iniciar sesión.',
       'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
-      'auth/user-not-found': 'No encontramos una cuenta con ese correo. ¿Ya te registraste?',
+      'auth/user-not-found': 'No encontramos ese usuario. ¿Ya te registraste?',
       'auth/wrong-password': 'Contraseña incorrecta.',
-      'auth/invalid-email': 'Ingresa un correo electrónico válido.',
+      'auth/invalid-email': 'Ese nombre de usuario no es válido.',
       'auth/invalid-credential': 'Usuario o contraseña incorrectos.',
       'auth/network-request-failed': 'Sin conexión. Revisa tu internet e intenta de nuevo.'
     };
@@ -55,17 +61,17 @@
     e.preventDefault();
     clearMsg();
     var name = document.getElementById('regName').value.trim();
-    var email = document.getElementById('regEmail').value.trim().toLowerCase();
+    var username = document.getElementById('regUser').value.trim().toLowerCase();
     var role = document.getElementById('regRole').value;
     var pass = document.getElementById('regPass').value;
-    if (!name || !email || !pass){ showMsg('Completa todos los campos.', 'error'); return; }
+    if (!name || !username || !pass){ showMsg('Completa todos los campos.', 'error'); return; }
 
     var submitBtn = registerForm.querySelector('button[type="submit"]');
     submitBtn.disabled = true; submitBtn.textContent = 'Creando...';
 
     try{
-      var cred = await auth.createUserWithEmailAndPassword(email, pass);
-      var profile = { name: name, email: email, role: role, sessionsCompleted: 0, createdAt: Date.now() };
+      var cred = await auth.createUserWithEmailAndPassword(usernameToEmail(username), pass);
+      var profile = { name: name, username: username, role: role, sessionsCompleted: 0, createdAt: Date.now() };
       await db.collection('users').doc(cred.user.uid).set(profile);
       currentUser = Object.assign({ uid: cred.user.uid }, profile);
       showMsg('Cuenta creada. ¡Bienvenido/a!', 'ok');
@@ -80,15 +86,15 @@
   loginForm.addEventListener('submit', async function(e){
     e.preventDefault();
     clearMsg();
-    var email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    var username = document.getElementById('loginUser').value.trim().toLowerCase();
     var pass = document.getElementById('loginPass').value;
-    if (!email || !pass){ showMsg('Ingresa tu correo y contraseña.', 'error'); return; }
+    if (!username || !pass){ showMsg('Ingresa usuario y contraseña.', 'error'); return; }
 
     var submitBtn = loginForm.querySelector('button[type="submit"]');
     submitBtn.disabled = true; submitBtn.textContent = 'Entrando...';
 
     try{
-      var cred = await auth.signInWithEmailAndPassword(email, pass);
+      var cred = await auth.signInWithEmailAndPassword(usernameToEmail(username), pass);
       var doc = await db.collection('users').doc(cred.user.uid).get();
       currentUser = Object.assign({ uid: cred.user.uid }, doc.data());
       showProfile();

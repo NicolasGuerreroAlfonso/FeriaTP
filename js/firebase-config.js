@@ -1,8 +1,5 @@
-// 1. Ve a console.firebase.google.com → tu proyecto → ícono de engranaje →
-//    "Configuración del proyecto" → "Tus apps" → app web (</>) y copia estos valores ahí.
-// 2. Reemplaza TODO lo de abajo por lo que te muestre Firebase.
-// 3. Guarda este archivo y sube el proyecto a GitHub — no necesitas tocar nada más.
-
+// Configuración de Firebase de Aula Activa.
+// No cambies estos valores salvo que cambies de proyecto Firebase.
 const firebaseConfig = {
   apiKey: "AIzaSyCRD15-HzvmCvt5dOnEgsGSTkE5AN-16DM",
   authDomain: "aulaactiva-ca551.firebaseapp.com",

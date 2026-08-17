@@ -49,8 +49,8 @@
 
         <form id="loginForm">
           <div class="field">
-            <label for="loginEmail">Correo electrónico</label>
-            <input id="loginEmail" type="email" autocomplete="email" placeholder="tucorreo@gmail.com" required>
+            <label for="loginUser">Usuario</label>
+            <input id="loginUser" type="text" autocomplete="username" required>
           </div>
           <div class="field">
             <label for="loginPass">Contraseña</label>
@@ -65,8 +65,8 @@
             <input id="regName" type="text" required>
           </div>
           <div class="field">
-            <label for="regEmail">Correo electrónico</label>
-            <input id="regEmail" type="email" autocomplete="email" placeholder="tucorreo@gmail.com" required>
+            <label for="regUser">Usuario</label>
+            <input id="regUser" type="text" required>
           </div>
           <div class="field">
             <label for="regRole">Rol</label>
@@ -126,86 +126,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
-
-<script>
-/* Filtro de nombres: se ejecuta desde login.html antes de crear la cuenta. */
-(function () {
-  const blocked = [
-    "puta","puto","putas","putos","putita","putito","puton",
-    "mierda","mierdas","mierdero","mierdoso","mierdosa",
-    "joder","jodete","jodido","jodida","jodidos","jodidas",
-    "coño","cono","concha","conchudo","conchuda",
-    "cabron","cabrona","cabrones","cabronas",
-    "pendejo","pendeja","pendejos","pendejas",
-    "idiota","idiotas","imbecil","imbeciles",
-    "estupido","estupida","estupidos","estupidas",
-    "tarado","tarada","tarados","taradas",
-    "maricon","maricona","maricas",
-    "gilipollas","capullo","capulla",
-    "culero","culera","culiados","culiado","culia","culeado",
-    "weon","weona","weones","huevon","huevona","huevones",
-    "conchetumare","conchatumadre","ctm","ql",
-    "reculiao","reculiado","reculiada",
-    "malparido","malparida","malparidos","malparidas",
-    "mamaguevo","mamagueva","mamabicho","mamahuevo",
-    "verga","vergazo","polla","pijazo","pija",
-    "culo","culos","culon","culona",
-    "chupapija","chupapijas","chupaculos",
-    "zorra","zorras","perra","perras","perro",
-    "prostituta","prostituto","prostitutas",
-    "bastardo","bastarda","bastardos","bastardas",
-    "fuck","fucking","shit","bitch","asshole","dick","pussy","cunt",
-    "whore","slut","motherfucker","bullshit"
-  ];
-
-  function normalize(value) {
-    return value
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[4@]/g, "a")
-      .replace(/[3]/g, "e")
-      .replace(/[1!|]/g, "i")
-      .replace(/[0]/g, "o")
-      .replace(/[5$]/g, "s")
-      .replace(/[7]/g, "t")
-      .replace(/[8]/g, "b")
-      .replace(/[^a-z0-9]/g, "");
-  }
-
-  function nameIsBlocked(name) {
-    const normalized = normalize(name);
-    if (!normalized) return true;
-
-    return blocked.some(word => {
-      const w = normalize(word);
-      return normalized.includes(w);
-    });
-  }
-
-  const form = document.getElementById("registerForm");
-  if (!form) return;
-
-  form.addEventListener("submit", function (event) {
-    const nameInput = document.getElementById("regName");
-    if (!nameInput) return;
-
-    if (nameIsBlocked(nameInput.value)) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-
-      const msg = document.getElementById("formMsg");
-      if (msg) {
-        msg.textContent = "Ese nombre no está permitido. Por favor, elige otro nombre.";
-        msg.className = "form-msg show error";
-      }
-
-      nameInput.focus();
-    }
-  }, true);
-})();
-</script>
-
 <script src="js/auth.js"></script>
 </body>
 </html>
