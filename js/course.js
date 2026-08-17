@@ -15,6 +15,7 @@
   let completed = new Set(JSON.parse(localStorage.getItem(storageKey) || '[]'));
   let current = 0;
 
+  // Cargar datos del curso
   $('#courseIcon').textContent = course.icon;
   $('#courseBadge').textContent = course.badge || 'Curso Aula Activa';
   $('#courseTitle').textContent = course.title;
@@ -24,26 +25,28 @@
   $('#courseRating').textContent = '⭐ ' + course.rating;
   $('#courseGoal').textContent = course.goal;
   document.title = course.title + ' — Aula Activa';
-  $('#progressCount').textContent = '0 de ' + allLessons.length + ' lecciones completadas';
 
   function save(){
     localStorage.setItem(storageKey, JSON.stringify([...completed]));
   }
 
+  // Actualiza la barra y textos de progreso
   function renderProgress(){
-    const pct = Math.round((completed.size / allLessons.length) * 100);
+    const total = allLessons.length;
+    const pct = total > 0 ? Math.round((completed.size / total) * 100) : 0;
+    
     $('#progressText').textContent = pct + '%';
     $('#progressBar').style.width = pct + '%';
-    $('#progressCount').textContent = completed.size + ' de ' + allLessons.length + ' lecciones completadas';
+    $('#progressCount').textContent = completed.size + ' de ' + total + ' lecciones completadas';
     $('#continueBtn').textContent = pct === 100 ? 'Curso completado ✓' : (completed.size ? 'Continuar curso' : 'Comenzar curso');
   }
 
   function renderSyllabus(){
     const box = $('#syllabus');
-    box.innerHTML = course.modules.map((m, mi) => `
+    box.innerHTML = course.modules.map((m) => `
       <div class="syllabus-module">
         <div class="syllabus-module-title"><span>${m.id}</span><strong>${m.title}</strong></div>
-        ${m.lessons.map((l, li) => {
+        ${m.lessons.map((l) => {
           const idx = allLessons.findIndex(x => x.title === l.title && x.moduleId === m.id);
           return `<button class="syllabus-lesson ${completed.has(idx)?'done':''}" data-index="${idx}">
             <span class="lesson-status">${completed.has(idx)?'✓':'○'}</span>${l.title}
@@ -78,14 +81,19 @@
   function openLesson(index){
     current = Math.max(0, Math.min(index, allLessons.length-1));
     const l = allLessons[current];
+    const isDone = completed.has(current);
+
     $('#lessonKicker').textContent = 'Módulo ' + l.moduleId + ' · Lección ' + (current+1) + ' de ' + allLessons.length;
     $('#lessonTitle').textContent = l.title;
     $('#lessonContent').textContent = l.content;
     $('#lessonActivity').textContent = l.activity;
-    $('#completeLesson').textContent = completed.has(current) ? 'Completada ✓' : 'Marcar como completada';
-    $('#completeLesson').classList.toggle('is-done', completed.has(current));
+    
+    $('#completeLesson').textContent = isDone ? 'Completada ✓' : 'Marcar como completada';
+    $('#completeLesson').classList.toggle('is-done', isDone);
+    
     $('#prevLesson').disabled = current === 0;
     $('#nextLesson').textContent = current === allLessons.length-1 ? 'Finalizar →' : 'Siguiente →';
+    
     $('#lessonModal').classList.remove('hidden');
     $('#lessonModal').setAttribute('aria-hidden','false');
     document.body.classList.add('modal-open');
@@ -97,11 +105,18 @@
     document.body.classList.remove('modal-open');
   }
 
-  $('#completeLesson').addEventListener('click',()=>{
-    completed.add(current);
-    save(); renderProgress(); renderSyllabus(); renderLessonCards();
-    $('#completeLesson').textContent = 'Completada ✓';
-    $('#completeLesson').classList.add('is-done');
+  // Evento para marcar o desmarcar lección
+  $('#completeLesson').addEventListener('click', () => {
+    if (completed.has(current)) {
+      completed.delete(current);
+    } else {
+      completed.add(current);
+    }
+    save();
+    renderProgress();
+    renderSyllabus();
+    renderLessonCards();
+    openLesson(current); // Actualiza el texto del botón en el modal
   });
 
   $('#prevLesson').addEventListener('click',()=>openLesson(current-1));
@@ -118,6 +133,7 @@
     openLesson(firstPending === -1 ? 0 : firstPending);
   });
 
+  // Carga inicial
   renderProgress();
   renderSyllabus();
   renderLessonCards();
