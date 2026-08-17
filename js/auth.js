@@ -88,7 +88,7 @@
     clearMsg();
     var email = normalizeEmail(document.getElementById('loginUser').value);
     var pass = document.getElementById('loginPass').value;
-    if (!email || !pass){ showMsg('Ingresa usuario y contraseña.', 'error'); return; }
+    if (!email || !pass){ showMsg('Ingresa tu correo y contraseña.', 'error'); return; }
 
     var submitBtn = loginForm.querySelector('button[type="submit"]');
     submitBtn.disabled = true; submitBtn.textContent = 'Entrando...';
@@ -104,70 +104,6 @@
     }finally{
       submitBtn.disabled = false; submitBtn.textContent = 'Entrar';
     }
-  });
-
-  // ---------- inicio con Google / Apple ----------
-  function providerProfile(user, providerName){
-    return {
-      name: user.displayName || (user.email ? user.email.split('@')[0] : 'Usuario'),
-      email: user.email || '',
-      role: 'Estudiante',
-      provider: providerName,
-      sessionsCompleted: 0,
-      createdAt: Date.now()
-    };
-  }
-
-  async function finishSocialLogin(result, providerName){
-    var user = result.user;
-    var ref = db.collection('users').doc(user.uid);
-    var doc = await ref.get();
-    if (!doc.exists){
-      var profile = providerProfile(user, providerName);
-      await ref.set(profile);
-      currentUser = Object.assign({ uid: user.uid }, profile);
-    } else {
-      var existing = doc.data() || {};
-      currentUser = Object.assign({ uid: user.uid }, existing, {
-        email: existing.email || user.email || '',
-        name: existing.name || user.displayName || (user.email ? user.email.split('@')[0] : 'Usuario')
-      });
-    }
-    showProfile();
-    initDashboardTimer();
-  }
-
-  async function socialLogin(provider, button, label){
-    clearMsg();
-    button.disabled = true;
-    button.dataset.originalText = button.textContent;
-    button.textContent = 'Conectando...';
-    try{
-      var result = await auth.signInWithPopup(provider);
-      await finishSocialLogin(result, label);
-    }catch(err){
-      if (err.code === 'auth/popup-closed-by-user') {
-        showMsg('La ventana de inicio de sesión se cerró.', 'error');
-      } else if (err.code === 'auth/popup-blocked') {
-        showMsg('El navegador bloqueó la ventana. Permite ventanas emergentes para este sitio.', 'error');
-      } else if (err.code === 'auth/account-exists-with-different-credential') {
-        showMsg('Ya existe una cuenta con ese correo usando otro método de acceso.', 'error');
-      } else {
-        showMsg(friendlyError(err), 'error');
-      }
-    }finally{
-      button.disabled = false;
-      button.textContent = button.dataset.originalText;
-    }
-  }
-
-  var googleBtn = document.getElementById('googleBtn');
-  var appleBtn = document.getElementById('appleBtn');
-  googleBtn.addEventListener('click', function(){
-    socialLogin(new firebase.auth.GoogleAuthProvider(), googleBtn, 'Google');
-  });
-  appleBtn.addEventListener('click', function(){
-    socialLogin(new firebase.auth.OAuthProvider('apple.com'), appleBtn, 'Apple');
   });
 
   var logoutBtn = document.getElementById('logoutBtn');
