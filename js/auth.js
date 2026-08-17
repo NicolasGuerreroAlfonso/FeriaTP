@@ -2,7 +2,7 @@
   var authViews = document.getElementById('authViews');
   if (!authViews) return; // only runs on login.html
 
-  var currentUser = null; // {uid, name, username, role, sessionsCompleted}
+  var currentUser = null; // {uid, name, email, role, sessionsCompleted}
 
   var profileView = document.getElementById('profileView');
   var authTitle = document.getElementById('authTitle');
@@ -14,12 +14,6 @@
 
   var auth = firebase.auth();
   var db = firebase.firestore();
-
-  // Firebase Authentication trabaja directamente con el correo del usuario.
-  function normalizeEmail(email){
-    return email.trim().toLowerCase();
-  }
-
 
   function clearMsg(){ formMsg.classList.remove('show','error','ok'); formMsg.textContent=''; }
   function showMsg(text, type){ formMsg.textContent = text; formMsg.classList.add('show', type); }
@@ -48,7 +42,7 @@
     var map = {
       'auth/email-already-in-use': 'Ese correo ya está registrado. Intenta iniciar sesión.',
       'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
-      'auth/user-not-found': 'No encontramos una cuenta con ese correo.',
+      'auth/user-not-found': 'No encontramos una cuenta con ese correo. ¿Ya te registraste?',
       'auth/wrong-password': 'Contraseña incorrecta.',
       'auth/invalid-email': 'Ingresa un correo electrónico válido.',
       'auth/invalid-credential': 'Usuario o contraseña incorrectos.',
@@ -61,7 +55,7 @@
     e.preventDefault();
     clearMsg();
     var name = document.getElementById('regName').value.trim();
-    var email = normalizeEmail(document.getElementById('regUser').value);
+    var email = document.getElementById('regEmail').value.trim().toLowerCase();
     var role = document.getElementById('regRole').value;
     var pass = document.getElementById('regPass').value;
     if (!name || !email || !pass){ showMsg('Completa todos los campos.', 'error'); return; }
@@ -86,7 +80,7 @@
   loginForm.addEventListener('submit', async function(e){
     e.preventDefault();
     clearMsg();
-    var email = normalizeEmail(document.getElementById('loginUser').value);
+    var email = document.getElementById('loginEmail').value.trim().toLowerCase();
     var pass = document.getElementById('loginPass').value;
     if (!email || !pass){ showMsg('Ingresa tu correo y contraseña.', 'error'); return; }
 
