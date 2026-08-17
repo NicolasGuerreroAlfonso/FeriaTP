@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curso — Aula Activa</title>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/courses.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="course-page">
+<header class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="brand-link"><img src="assets/logo.svg" alt="Aula Activa" class="nav-logo"><span>Aula Activa</span></a>
+    <nav class="nav-links">
+      <a href="index.html">Inicio</a><a href="index.html#cursos">Cursos</a><a href="login.html">Mi progreso</a>
+    </nav>
+    <a href="login.html" class="btn-nav">Ingresar</a>
+  </div>
+</header>
+
+<main id="courseApp">
+  <section class="course-hero">
+    <div class="container course-hero-inner">
+      <a href="index.html#cursos" class="back-link">← Volver a cursos</a>
+      <div class="course-hero-grid">
+        <div>
+          <div class="course-icon-large" id="courseIcon">📚</div>
+          <span class="eyebrow" id="courseBadge">Curso</span>
+          <h1 id="courseTitle">Cargando curso...</h1>
+          <p class="course-description" id="courseDescription"></p>
+          <div class="course-meta-large"><span id="courseDuration"></span><span id="courseLevel"></span><span id="courseRating"></span></div>
+        </div>
+        <aside class="course-progress-card">
+          <div class="progress-top"><strong>Tu progreso</strong><span id="progressText">0%</span></div>
+          <div class="progress-bar"><span id="progressBar"></span></div>
+          <p id="progressCount">0 de 12 lecciones completadas</p>
+          <button class="btn-primary full-btn" id="continueBtn">Comenzar curso</button>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section course-content">
+    <div class="container course-layout">
+      <div>
+        <div class="course-intro-card">
+          <span class="eyebrow eyebrow--green">Objetivo del curso</span>
+          <p id="courseGoal"></p>
+        </div>
+        <div class="lessons-area" id="lessonArea"></div>
+      </div>
+      <aside class="course-sidebar">
+        <div class="syllabus-card">
+          <h3>Contenido</h3>
+          <div id="syllabus"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<div class="lesson-modal hidden" id="lessonModal" aria-hidden="true">
+  <div class="lesson-dialog">
+    <button class="modal-close" id="closeLesson" aria-label="Cerrar">×</button>
+    <div class="lesson-kicker" id="lessonKicker"></div>
+    <h2 id="lessonTitle"></h2>
+    <p class="lesson-text" id="lessonContent"></p>
+    <div class="activity-box"><strong>🎯 Actividad práctica</strong><p id="lessonActivity"></p></div>
+    <div class="lesson-actions">
+      <button class="btn-secondary" id="prevLesson">← Anterior</button>
+      <button class="btn-primary" id="completeLesson">Marcar como completada</button>
+      <button class="btn-secondary" id="nextLesson">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/courses-data.js"></script>
+<script src="js/course.js"></script>
+</body>
+</html>
