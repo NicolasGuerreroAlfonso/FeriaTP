@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escritura y comunicación | Cursos</title>
+  <link rel="stylesheet" href="estilos-curso.css">
+  <style>
+    .hidden { display: none !important; }
+    .btn-complete.completada {
+      background: #2ecc71 !important;
+      color: white !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="auth-loading" class="estado-mensaje">
+    <h2>Cargando tu progreso...</h2>
+    <p>Verificando sesión con Firebase</p>
+  </div>
+
+  <div id="no-auth" class="estado-mensaje hidden">
+    <h2>Debes iniciar sesión</h2>
+    <p>Para acceder a este curso y guardar tu progreso necesitas estar logueado.</p>
+    <a href="../login.html" class="btn btn-primary">Ir a Ingresar</a>
+  </div>
+
+  <div id="curso-app" class="hidden">
+    <header class="curso-header">
+      <a href="../index.html" class="logo">
+        <span style="font-size:1.4rem">📚</span>
+        <span>Volver a Cursos</span>
+      </a>
+      <div class="user-info">
+        <span id="user-name">Usuario</span>
+        <div class="avatar" id="user-avatar">U</div>
+        <button onclick="logout()" class="btn btn-secondary" style="padding:6px 14px;font-size:0.85rem;margin-left:8px;">Salir</button>
+      </div>
+    </header>
+
+    <div class="curso-container">
+      <aside class="sidebar">
+        <div class="curso-titulo">Escritura y comunicación</div>
+        <div class="curso-meta">
+          <span>⏱️ 8 semanas</span>
+          <span>⭐ 4.7</span>
+        </div>
+
+        <div class="progress-box">
+          <div class="label">
+            <span>Tu progreso</span>
+            <span id="progress-percent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="fill" id="progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div id="modulos-lista" class="modulos"></div>
+      </aside>
+
+      <main class="contenido">
+        <div class="contenido-header">
+          <div class="breadcrumb" id="breadcrumb">Módulo 1 → Lección 1</div>
+          <h1 id="leccion-titulo">Cargando...</h1>
+        </div>
+
+        <div class="leccion-body">
+          <div id="leccion-contenido"></div>
+
+          <div class="acciones">
+            <button id="btn-prev" class="btn btn-secondary" onclick="prevLesson()">← Anterior</button>
+            <button id="btn-complete" class="btn btn-primary" onclick="markComplete()">Marcar como completada</button>
+            <button id="btn-next" class="btn btn-primary" onclick="nextLesson()">Siguiente lección →</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initCourse } from './firebase-curso.js';
+
+    const lessons = [
+      {
+        modulo: "Módulo 1: Fundamentos de la escritura clara",
+        titulo: "Escribir para que te entiendan",
+        contenido: `
+          <h2>Escribir para que te entiendan</h2>
+          <p>La buena escritura no es adorno. Es claridad. Si el lector tiene que esforzarse para entenderte, ya perdiste.</p>
+
+          <h3>El principio más importante</h3>
+          <p><strong>Escribe para el lector, no para ti.</strong> Pregúntate siempre: “¿Qué necesita saber esta persona y en qué orden?”</p>
+
+          <h3>Las 5 reglas de oro de la claridad</h3>
+          <ol>
+            <li>Una idea principal por párrafo.</li>
+            <li>Frases cortas (máximo 20-25 palabras cuando sea posible).</li>
+            <li>Prefiere verbos fuertes a adjetivos y adverbios débiles.</li>
+            <li>Elimina las palabras de relleno (“en realidad”, “básicamente”, “de alguna manera”).</li>
+            <li>Usa la voz activa: “El equipo resolvió el problema” en lugar de “El problema fue resuelto por el equipo”.</li>
+          </ol>
+
+          <div class="tip">
+            <strong>💡 Ejercicio rápido:</strong> Toma un párrafo que hayas escrito recientemente y tacha todas las palabras que puedas sin cambiar el significado. Te sorprenderá cuánto sobra.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 1: Fundamentos de la escritura clara",
+        titulo: "Estructura: el esqueleto de todo texto",
+        contenido: `
+          <h2>Estructura: el esqueleto de todo texto</h2>
+          <p>Aunque el contenido sea bueno, sin estructura el lector se pierde.</p>
+
+          <h3>La estructura clásica que siempre funciona</h3>
+          <ul>
+            <li><strong>Inicio</strong>: engancha + presenta el problema o la idea principal.</li>
+            <li><strong>Desarrollo</strong>: argumentos, ejemplos, evidencia (ordenados lógicamente).</li>
+            <li><strong>Cierre</strong>: conclusión clara + llamado a la acción o reflexión final.</li>
+          </ul>
+
+          <h3>Técnica del “esqueleto primero”</h3>
+          <p>Antes de escribir el texto completo:</p>
+          <ol>
+            <li>Escribe en una lista las 4-7 ideas principales que quieres transmitir.</li>
+            <li>Ordénalas de forma lógica.</li>
+            <li>Solo entonces empieza a desarrollar cada punto.</li>
+          </ol>
+
+          <div class="importante">
+            <strong>📌 Regla de oro:</strong> Si no puedes explicar la estructura de tu texto en 20 segundos, probablemente el lector tampoco la va a entender.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 2: Escritura persuasiva y profesional",
+        titulo: "Cómo escribir correos que obtienen respuesta",
+        contenido: `
+          <h2>Cómo escribir correos que obtienen respuesta</h2>
+          <p>La mayoría de los correos fallan porque son largos, vagos o no tienen un pedido claro.</p>
+
+          <h3>La fórmula de un buen correo</h3>
+          <ol>
+            <li><strong>Asunto claro y específico</strong> (no “Hola” ni “Consulta”).</li>
+            <li><strong>Primera línea</strong>: contexto + propósito en una frase.</li>
+            <li><strong>Cuerpo</strong>: máximo 2-4 párrafos cortos. Una idea por párrafo.</li>
+            <li><strong>Pedido concreto</strong>: qué necesitas y para cuándo.</li>
+            <li><strong>Cierre amable y profesional</strong>.</li>
+          </ol>
+
+          <div class="tip">
+            <strong>💡 Ejemplo de asunto bueno:</strong> “Revisión del informe de ventas – feedback para el viernes 18”
+            <br><strong>Asunto malo:</strong> “Informe”
+          </div>
+
+          <h3>Errores que matan la respuesta</h3>
+          <ul>
+            <li>Escribir párrafos eternos.</li>
+            <li>No dejar claro qué esperas del destinatario.</li>
+            <li>Usar un tono demasiado formal o demasiado informal según el contexto.</li>
+          </ul>
+        `
+      },
+      {
+        modulo: "Módulo 2: Escritura persuasiva y profesional",
+        titulo: "El arte de dar y recibir feedback escrito",
+        contenido: `
+          <h2>El arte de dar y recibir feedback escrito</h2>
+          <p>El feedback escrito mal dado puede dañar relaciones. Bien dado, acelera el crecimiento.</p>
+
+          <h3>Cómo dar feedback útil</h3>
+          <ul>
+            <li>Sé específico (no “está mal”, sino “este párrafo se entiende mejor si empiezas por el resultado”).</li>
+            <li>Separa la persona del trabajo.</li>
+            <li>Ofrece una alternativa o pregunta: “¿Qué te parece si…?”.</li>
+            <li>Equilibra lo que funciona con lo que se puede mejorar.</li>
+          </ul>
+
+          <h3>Cómo recibir feedback sin ponerte a la defensiva</h3>
+          <ol>
+            <li>Lee completo antes de reaccionar.</li>
+            <li>Busca la intención útil detrás del comentario.</li>
+            <li>Pregunta para aclarar si algo no se entiende.</li>
+            <li>Decide qué vas a aplicar (no tienes que aceptar todo).</li>
+          </ol>
+
+          <div class="importante">
+            <strong>📌 Frase poderosa:</strong> “Gracias por tomarte el tiempo de revisarlo. Voy a aplicar el punto X y Y.”
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 3: Comunicación oral y presencia",
+        titulo: "Hablar con claridad y confianza",
+        contenido: `
+          <h2>Hablar con claridad y confianza</h2>
+          <p>La comunicación oral efectiva se puede entrenar. No es un talento mágico.</p>
+
+          <h3>Los 4 pilares de hablar bien</h3>
+          <ol>
+            <li><strong>Claridad</strong>: una idea principal. Si no puedes resumirla en una frase, aún no está clara.</li>
+            <li><strong>Estructura</strong>: dile a la gente hacia dónde vas (“Voy a contarles tres puntos…”).</li>
+            <li><strong>Ritmo y pausas</strong>: las pausas dan peso a lo que dices y te dan tiempo de pensar.</li>
+            <li><strong>Lenguaje corporal</strong>: postura abierta, contacto visual, gestos naturales.</li>
+          </ol>
+
+          <div class="tip">
+            <strong>💡 Ejercicio diario:</strong> Explica en voz alta (aunque sea solo) durante 60 segundos algo que aprendiste hoy. Grábate de vez en cuando.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 3: Comunicación oral y presencia",
+        titulo: "Presentaciones que mantienen la atención",
+        contenido: `
+          <h2>Presentaciones que mantienen la atención</h2>
+          <p>Las peores presentaciones son las que parecen documentos leídos en voz alta.</p>
+
+          <h3>Reglas de oro para diapositivas</h3>
+          <ul>
+            <li>Máximo 1 idea por diapositiva.</li>
+            <li>Poco texto. El texto es para que el público lo lea, no para que tú lo leas.</li>
+            <li>Usa imágenes, diagramas o números grandes cuando aporten.</li>
+            <li>Nunca leas las diapositivas. Úsalas como apoyo visual.</li>
+          </ul>
+
+          <h3>Estructura de una buena presentación corta</h3>
+          <ol>
+            <li>Gancho (pregunta, historia corta, dato sorprendente).</li>
+            <li>Problema o contexto.</li>
+            <li>3 puntos clave máximo.</li>
+            <li>Conclusión + llamado a la acción o siguiente paso.</li>
+          </ol>
+
+          <div class="importante">
+            <strong>📌 Recuerda:</strong> La gente no recuerda diapositivas. Recuerda cómo las hiciste sentir y las 1-2 ideas principales que se llevaron.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 4: Práctica y estilo personal",
+        titulo: "Encuentra tu voz y practica deliberadamente",
+        contenido: `
+          <h2>Encuentra tu voz y practica deliberadamente</h2>
+          <p>La mejor forma de mejorar es escribir y hablar mucho, pero con intención.</p>
+
+          <h3>Sistema de práctica semanal</h3>
+          <ul>
+            <li><strong>3 días</strong>: escribe un texto corto (correo, post, resumen de algo que aprendiste).</li>
+            <li><strong>2 días</strong>: explica algo en voz alta durante 2-3 minutos.</li>
+            <li><strong>1 día</strong>: revisa algo que escribiste hace una semana y mejóralo.</li>
+          </ul>
+
+          <h3>Cómo encontrar tu estilo</h3>
+          <p>Lee autores o creadores que te gusten y pregunta: “¿Qué me gusta de su forma de comunicarse?”. Luego intenta aplicar solo 1-2 de esas características, no copiar todo.</p>
+
+          <div class="tip">
+            <strong>🎯 Meta del curso:</strong> Que al terminar puedas escribir un correo claro en 5 minutos y explicar una idea compleja de forma sencilla en una conversación.
+          </div>
+        `
+      }
+    ];
+
+    initCourse("escritura-comunicacion", lessons);
+  </script>
+</body>
+</html>

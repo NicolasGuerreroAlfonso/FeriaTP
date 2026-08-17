@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introducción a la programación | Cursos</title>
+  <link rel="stylesheet" href="estilos-curso.css">
+  <style>
+    .hidden { display: none !important; }
+    .btn-complete.completada {
+      background: #2ecc71 !important;
+      color: white !important;
+    }
+    code {
+      background: #f0ebe3;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.95em;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px 20px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="auth-loading" class="estado-mensaje">
+    <h2>Cargando tu progreso...</h2>
+    <p>Verificando sesión con Firebase</p>
+  </div>
+
+  <div id="no-auth" class="estado-mensaje hidden">
+    <h2>Debes iniciar sesión</h2>
+    <p>Para acceder a este curso y guardar tu progreso necesitas estar logueado.</p>
+    <a href="../login.html" class="btn btn-primary">Ir a Ingresar</a>
+  </div>
+
+  <div id="curso-app" class="hidden">
+    <header class="curso-header">
+      <a href="../index.html" class="logo">
+        <span style="font-size:1.4rem">📚</span>
+        <span>Volver a Cursos</span>
+      </a>
+      <div class="user-info">
+        <span id="user-name">Usuario</span>
+        <div class="avatar" id="user-avatar">U</div>
+        <button onclick="logout()" class="btn btn-secondary" style="padding:6px 14px;font-size:0.85rem;margin-left:8px;">Salir</button>
+      </div>
+    </header>
+
+    <div class="curso-container">
+      <aside class="sidebar">
+        <div class="curso-titulo">Introducción a la programación</div>
+        <div class="curso-meta">
+          <span>⏱️ 8 semanas</span>
+          <span>⭐ 4.7</span>
+        </div>
+
+        <div class="progress-box">
+          <div class="label">
+            <span>Tu progreso</span>
+            <span id="progress-percent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="fill" id="progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div id="modulos-lista" class="modulos"></div>
+      </aside>
+
+      <main class="contenido">
+        <div class="contenido-header">
+          <div class="breadcrumb" id="breadcrumb">Módulo 1 → Lección 1</div>
+          <h1 id="leccion-titulo">Cargando...</h1>
+        </div>
+
+        <div class="leccion-body">
+          <div id="leccion-contenido"></div>
+
+          <div class="acciones">
+            <button id="btn-prev" class="btn btn-secondary" onclick="prevLesson()">← Anterior</button>
+            <button id="btn-complete" class="btn btn-primary" onclick="markComplete()">Marcar como completada</button>
+            <button id="btn-next" class="btn btn-primary" onclick="nextLesson()">Siguiente lección →</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initCourse } from './firebase-curso.js';
+
+    const lessons = [
+      {
+        modulo: "Módulo 1: Pensar como programador",
+        titulo: "Qué es realmente programar",
+        contenido: `
+          <h2>Qué es realmente programar</h2>
+          <p>Programar no es memorizar código. Es <strong>resolver problemas</strong> dándole instrucciones precisas a una máquina.</p>
+
+          <h3>El núcleo de la programación</h3>
+          <ol>
+            <li>Entender el problema.</li>
+            <li>Dividirlo en pasos más pequeños.</li>
+            <li>Escribir instrucciones claras para cada paso.</li>
+            <li>Probar y corregir (debuggear).</li>
+          </ol>
+
+          <div class="tip">
+            <strong>💡 Analogía útil:</strong> Programar es como escribir una receta extremadamente detallada para alguien que no sabe cocinar y solo sigue instrucciones al pie de la letra.
+          </div>
+
+          <h3>Mentalidad de principiante efectiva</h3>
+          <ul>
+            <li>La frustración es normal y temporal.</li>
+            <li>Google y Stack Overflow son herramientas, no trampas.</li>
+            <li>Leer código de otros es una de las mejores formas de aprender.</li>
+          </ul>
+        `
+      },
+      {
+        modulo: "Módulo 1: Pensar como programador",
+        titulo: "Algoritmos y pensamiento lógico",
+        contenido: `
+          <h2>Algoritmos y pensamiento lógico</h2>
+          <p>Un algoritmo es simplemente una secuencia de pasos para resolver un problema.</p>
+
+          <h3>Ejemplo cotidiano convertido en algoritmo</h3>
+          <p><strong>Problema:</strong> Preparar café.</p>
+          <ol>
+            <li>Verificar si hay café y agua.</li>
+            <li>Si no hay, ir a comprar.</li>
+            <li>Poner agua a calentar.</li>
+            <li>Mientras tanto, preparar el filtro con café.</li>
+            <li>Cuando el agua hierva, verterla sobre el café.</li>
+            <li>Esperar 3-4 minutos.</li>
+            <li>Servir.</li>
+          </ol>
+
+          <h3>Conceptos clave que usaremos</h3>
+          <ul>
+            <li><strong>Secuencia</strong>: pasos en orden.</li>
+            <li><strong>Condicionales</strong>: “si pasa esto, haz aquello”.</li>
+            <li><strong>Bucles</strong>: repetir algo mientras se cumpla una condición.</li>
+            <li><strong>Variables</strong>: cajas donde guardamos información.</li>
+          </ul>
+
+          <div class="importante">
+            <strong>📌 Ejercicio:</strong> Elige una tarea diaria (lavar platos, organizarte la mañana…) y escríbela como un algoritmo con pasos numerados.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 2: Primeros pasos con código",
+        titulo: "Variables, tipos de datos y operaciones",
+        contenido: `
+          <h2>Variables, tipos de datos y operaciones</h2>
+          <p>Las variables son el equivalente a cajas etiquetadas donde guardamos información.</p>
+
+          <h3>Tipos de datos básicos (ejemplo en JavaScript)</h3>
+          <ul>
+            <li><code>string</code> → texto: <code>"Hola mundo"</code></li>
+            <li><code>number</code> → números: <code>42</code>, <code>3.14</code></li>
+            <li><code>boolean</code> → verdadero/falso: <code>true</code>, <code>false</code></li>
+            <li><code>array</code> → lista de valores: <code>[1, 2, 3]</code></li>
+            <li><code>object</code> → colección de pares clave-valor</li>
+          </ul>
+
+          <h3>Ejemplo práctico</h3>
+          <pre>
+let nombre = "Ana";
+let edad = 28;
+let esEstudiante = true;
+
+console.log(nombre + " tiene " + edad + " años");
+          </pre>
+
+          <div class="tip">
+            <strong>💡 Buena práctica:</strong> Usa nombres de variables descriptivos (<code>edadUsuario</code> es mejor que <code>x</code>).
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 2: Primeros pasos con código",
+        titulo: "Condicionales: tomar decisiones en el código",
+        contenido: `
+          <h2>Condicionales: tomar decisiones en el código</h2>
+          <p>Los condicionales permiten que el programa se comporte de forma diferente según la situación.</p>
+
+          <h3>Estructura básica</h3>
+          <pre>
+if (condicion) {
+  // se ejecuta si la condición es verdadera
+} else if (otraCondicion) {
+  // se ejecuta si la segunda es verdadera
+} else {
+  // se ejecuta si ninguna fue verdadera
+}
+          </pre>
+
+          <h3>Ejemplo</h3>
+          <pre>
+let nota = 85;
+
+if (nota >= 90) {
+  console.log("Excelente");
+} else if (nota >= 70) {
+  console.log("Aprobado");
+} else {
+  console.log("Necesitas reforzar");
+}
+          </pre>
+
+          <div class="importante">
+            <strong>📌 Operadores de comparación útiles:</strong> <code>===</code> (igual estricto), <code>!==</code> (diferente), <code>></code>, <code><</code>, <code>>=</code>, <code><=</code>
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 3: Repetición y organización",
+        titulo: "Bucles: no repitas código a mano",
+        contenido: `
+          <h2>Bucles: no repitas código a mano</h2>
+          <p>Cuando necesitas hacer algo muchas veces, los bucles son tu mejor amigo.</p>
+
+          <h3>Los dos bucles más usados</h3>
+          <p><strong>for</strong> → cuando sabes cuántas veces quieres repetir:</p>
+          <pre>
+for (let i = 0; i < 5; i++) {
+  console.log("Repetición número " + i);
+}
+          </pre>
+
+          <p><strong>while</strong> → cuando quieres repetir mientras se cumpla una condición:</p>
+          <pre>
+let vidas = 3;
+while (vidas > 0) {
+  console.log("Sigues jugando. Vidas: " + vidas);
+  vidas--;
+}
+          </pre>
+
+          <div class="tip">
+            <strong>💡 Cuidado:</strong> Un bucle mal hecho puede volverse infinito y colgar el programa. Siempre asegúrate de que la condición de salida se pueda cumplir.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 3: Repetición y organización",
+        titulo: "Funciones: organiza y reutiliza tu código",
+        contenido: `
+          <h2>Funciones: organiza y reutiliza tu código</h2>
+          <p>Una función es un bloque de código con nombre que puedes ejecutar cuando quieras.</p>
+
+          <h3>Por qué son importantes</h3>
+          <ul>
+            <li>Evitan copiar y pegar el mismo código muchas veces.</li>
+            <li>Hacen el programa más legible.</li>
+            <li>Permiten probar partes del código de forma aislada.</li>
+          </ul>
+
+          <h3>Ejemplo</h3>
+          <pre>
+function saludar(nombre) {
+  return "Hola, " + nombre + "!";
+}
+
+console.log(saludar("Carlos"));
+console.log(saludar("María"));
+          </pre>
+
+          <div class="importante">
+            <strong>📌 Principio clave:</strong> Una función debería hacer <em>una</em> cosa bien. Si hace demasiadas cosas, divídela.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 4: Proyectos y siguientes pasos",
+        titulo: "Tu primer mini-proyecto",
+        contenido: `
+          <h2>Tu primer mini-proyecto</h2>
+          <p>La mejor forma de consolidar es construir algo pequeño de principio a fin.</p>
+
+          <h3>Ideas de proyectos para principiantes</h3>
+          <ul>
+            <li>Una calculadora simple.</li>
+            <li>Un generador de contraseñas.</li>
+            <li>Una lista de tareas (to-do list).</li>
+            <li>Un convertidor de unidades (temperatura, moneda…).</li>
+            <li>Un juego muy simple (adivina el número).</li>
+          </ul>
+
+          <h3>Proceso recomendado</h3>
+          <ol>
+            <li>Define exactamente qué debe hacer el programa.</li>
+            <li>Divide el problema en funciones pequeñas.</li>
+            <li>Implementa una función a la vez y pruébala.</li>
+            <li>Une las piezas.</li>
+            <li>Mejora y arregla errores.</li>
+          </ol>
+
+          <div class="tip">
+            <strong>🎯 Consejo final:</strong> No esperes a “saber suficiente”. Empieza a construir ahora. El conocimiento se solidifica construyendo.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 4: Proyectos y siguientes pasos",
+        titulo: "Camino de aprendizaje después de este curso",
+        contenido: `
+          <h2>Camino de aprendizaje después de este curso</h2>
+          <p>Este curso es solo el punto de partida. Aquí tienes una brújula para continuar.</p>
+
+          <h3>Posibles caminos</h3>
+          <ul>
+            <li><strong>Desarrollo web</strong>: HTML + CSS + JavaScript → React o similar.</li>
+            <li><strong>Backend</strong>: Node.js, Python (Django/Flask), bases de datos.</li>
+            <li><strong>Ciencia de datos / IA</strong>: Python + librerías (Pandas, NumPy, etc.).</li>
+            <li><strong>Mobile</strong>: React Native o Flutter.</li>
+          </ul>
+
+          <h3>Hábitos de programador efectivo</h3>
+          <ul>
+            <li>Programa un poco casi todos los días.</li>
+            <li>Lee código de otros (GitHub es tu amigo).</li>
+            <li>Explica lo que aprendes (enseñar es la mejor forma de consolidar).</li>
+            <li>Construye proyectos que te importen personalmente.</li>
+          </ul>
+
+          <div class="importante">
+            <strong>🚀 Mensaje final:</strong> Todos los programadores experimentados fueron principiantes que no se rindieron. El único requisito real es la constancia.
+          </div>
+        `
+      }
+    ];
+
+    initCourse("introduccion-programacion", lessons);
+  </script>
+</body>
+</html>

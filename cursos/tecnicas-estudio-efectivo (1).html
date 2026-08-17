@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matemáticas desde cero | Cursos</title>
+  <link rel="stylesheet" href="estilos-curso.css">
+  <style>
+    .hidden { display: none !important; }
+    .btn-complete.completada {
+      background: #2ecc71 !important;
+      color: white !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="auth-loading" class="estado-mensaje">
+    <h2>Cargando tu progreso...</h2>
+    <p>Verificando sesión con Firebase</p>
+  </div>
+
+  <div id="no-auth" class="estado-mensaje hidden">
+    <h2>Debes iniciar sesión</h2>
+    <p>Para acceder a este curso y guardar tu progreso necesitas estar logueado.</p>
+    <a href="../login.html" class="btn btn-primary">Ir a Ingresar</a>
+  </div>
+
+  <div id="curso-app" class="hidden">
+    <header class="curso-header">
+      <a href="../index.html" class="logo">
+        <span style="font-size:1.4rem">📚</span>
+        <span>Volver a Cursos</span>
+      </a>
+      <div class="user-info">
+        <span id="user-name">Usuario</span>
+        <div class="avatar" id="user-avatar">U</div>
+        <button onclick="logout()" class="btn btn-secondary" style="padding:6px 14px;font-size:0.85rem;margin-left:8px;">Salir</button>
+      </div>
+    </header>
+
+    <div class="curso-container">
+      <aside class="sidebar">
+        <div class="curso-titulo">Matemáticas desde cero</div>
+        <div class="curso-meta">
+          <span>⏱️ 10 semanas</span>
+          <span>⭐ 4.9</span>
+          <span style="background:#fff3e0;color:#e65100;padding:2px 8px;border-radius:12px;font-size:0.75rem;">DESTACADO</span>
+        </div>
+
+        <div class="progress-box">
+          <div class="label">
+            <span>Tu progreso</span>
+            <span id="progress-percent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="fill" id="progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div id="modulos-lista" class="modulos"></div>
+      </aside>
+
+      <main class="contenido">
+        <div class="contenido-header">
+          <div class="breadcrumb" id="breadcrumb">Módulo 1 → Lección 1</div>
+          <h1 id="leccion-titulo">Cargando...</h1>
+        </div>
+
+        <div class="leccion-body">
+          <div id="leccion-contenido"></div>
+
+          <div class="acciones">
+            <button id="btn-prev" class="btn btn-secondary" onclick="prevLesson()">← Anterior</button>
+            <button id="btn-complete" class="btn btn-primary" onclick="markComplete()">Marcar como completada</button>
+            <button id="btn-next" class="btn btn-primary" onclick="nextLesson()">Siguiente lección →</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initCourse } from './firebase-curso.js';
+
+    const lessons = [
+      {
+        modulo: "Módulo 1: Mentalidad y bases numéricas",
+        titulo: "Reprograma tu relación con las matemáticas",
+        contenido: `
+          <h2>Reprograma tu relación con las matemáticas</h2>
+          <p>Muchas personas cargan la creencia de “no soy bueno para las mates”. Esa creencia es el primer obstáculo.</p>
+
+          <h3>Verdades importantes</h3>
+          <ul>
+            <li>La habilidad matemática se construye con práctica deliberada, no es un don fijo.</li>
+            <li>Cometer errores es parte esencial del aprendizaje (el cerebro aprende más del error corregido).</li>
+            <li>Entender el “por qué” es más poderoso que memorizar el “cómo”.</li>
+          </ul>
+
+          <div class="tip">
+            <strong>💡 Nuevo mantra:</strong> “Todavía no lo entiendo… pero lo voy a entender.”
+          </div>
+
+          <h3>Cómo estudiar matemáticas de forma efectiva</h3>
+          <ol>
+            <li>Intenta resolver el problema antes de mirar la solución.</li>
+            <li>Cuando te atascas, mira solo una pista, no la respuesta completa.</li>
+            <li>Explica el procedimiento en voz alta como si se lo enseñaras a alguien.</li>
+            <li>Vuelve a hacer el mismo tipo de ejercicio 2-3 días después.</li>
+          </ol>
+        `
+      },
+      {
+        modulo: "Módulo 1: Mentalidad y bases numéricas",
+        titulo: "Números, operaciones y sentido numérico",
+        contenido: `
+          <h2>Números, operaciones y sentido numérico</h2>
+          <p>Antes de fórmulas complejas, necesitamos un sentido sólido de los números.</p>
+
+          <h3>Operaciones fundamentales</h3>
+          <p>Asegúrate de dominar con fluidez:</p>
+          <ul>
+            <li>Suma y resta de números grandes (incluyendo con llevadas).</li>
+            <li>Multiplicación (tablas hasta el 12 de memoria + algoritmo).</li>
+            <li>División (incluyendo decimales básicos).</li>
+            <li>Orden de operaciones (PEMDAS / jerarquía de operaciones).</li>
+          </ul>
+
+          <h3>Sentido numérico</h3>
+          <p>Es la capacidad de estimar y notar cuando un resultado “no tiene sentido”.</p>
+          <div class="importante">
+            <strong>Ejercicio:</strong> Antes de calcular exactamente, estima. Ejemplo: 48 × 21 ≈ 50 × 20 = 1000. Luego calcula y compara.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 2: Fracciones, decimales y porcentajes",
+        titulo: "Fracciones sin miedo",
+        contenido: `
+          <h2>Fracciones sin miedo</h2>
+          <p>Las fracciones son una de las mayores fuentes de bloqueo… y también una de las ideas más útiles.</p>
+
+          <h3>Qué representa realmente una fracción</h3>
+          <p>Una fracción a/b significa: “divide algo en b partes iguales y toma a de esas partes”.</p>
+
+          <h3>Operaciones clave</h3>
+          <ul>
+            <li><strong>Suma/resta</strong>: mismo denominador → suma numeradores. Diferente → busca común.</li>
+            <li><strong>Multiplicación</strong>: multiplica numeradores entre sí y denominadores entre sí.</li>
+            <li><strong>División</strong>: multiplica por el inverso (da la vuelta a la segunda fracción).</li>
+          </ul>
+
+          <div class="tip">
+            <strong>💡 Truco visual:</strong> Siempre que puedas, dibuja la fracción (pizza, barra, rectángulo). La imagen ayuda a anclar el concepto.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 2: Fracciones, decimales y porcentajes",
+        titulo: "Decimales y porcentajes en la vida real",
+        contenido: `
+          <h2>Decimales y porcentajes en la vida real</h2>
+          <p>Porcentajes aparecen en descuentos, intereses, estadísticas, propinas, impuestos…</p>
+
+          <h3>Conversiones rápidas</h3>
+          <ul>
+            <li>De fracción a decimal: divide numerador ÷ denominador.</li>
+            <li>De decimal a porcentaje: multiplica por 100 (0.35 → 35%).</li>
+            <li>De porcentaje a decimal: divide entre 100 (35% → 0.35).</li>
+          </ul>
+
+          <h3>Cálculos mentales útiles</h3>
+          <ul>
+            <li>10% de un número = mover la coma un lugar a la izquierda.</li>
+            <li>5% = la mitad del 10%.</li>
+            <li>15% = 10% + 5%.</li>
+            <li>20% = el doble del 10%.</li>
+          </ul>
+
+          <div class="importante">
+            <strong>📌 Práctica diaria:</strong> Cada vez que veas un descuento o una propina, calcúlalo mentalmente antes de mirar la calculadora.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 3: Álgebra básica",
+        titulo: "El lenguaje del álgebra",
+        contenido: `
+          <h2>El lenguaje del álgebra</h2>
+          <p>El álgebra no es más que aritmética con letras que representan números desconocidos o variables.</p>
+
+          <h3>Conceptos fundamentales</h3>
+          <ul>
+            <li><strong>Variable</strong>: una letra que representa un número (normalmente x, y, n…).</li>
+            <li><strong>Expresión</strong>: combinación de números, variables y operaciones (3x + 5).</li>
+            <li><strong>Ecuación</strong>: una igualdad (3x + 5 = 20).</li>
+            <li><strong>Resolver</strong>: encontrar el valor de la variable que hace verdadera la igualdad.</li>
+          </ul>
+
+          <h3>Regla de oro</h3>
+          <p>Lo que haces en un lado de la ecuación, lo tienes que hacer en el otro para mantener la igualdad.</p>
+
+          <div class="tip">
+            <strong>💡 Analogía útil:</strong> Una ecuación es como una balanza en equilibrio. Si añades o quitas peso de un lado, debes hacer lo mismo en el otro.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 3: Álgebra básica",
+        titulo: "Resolviendo ecuaciones paso a paso",
+        contenido: `
+          <h2>Resolviendo ecuaciones paso a paso</h2>
+          <p>Vamos a dominar el proceso sistemático.</p>
+
+          <h3>Método general</h3>
+          <ol>
+            <li>Simplifica cada lado (quita paréntesis, combina términos semejantes).</li>
+            <li>Aísla la variable: mueve los términos con la variable a un lado y los números al otro.</li>
+            <li>Divide o multiplica para dejar la variable sola.</li>
+            <li>Verifica sustituyendo el valor encontrado en la ecuación original.</li>
+          </ol>
+
+          <h3>Ejemplo guiado</h3>
+          <p>Resuelve: 2x + 7 = 19</p>
+          <ul>
+            <li>Resta 7 en ambos lados → 2x = 12</li>
+            <li>Divide ambos lados entre 2 → x = 6</li>
+            <li>Verificación: 2(6) + 7 = 12 + 7 = 19 ✓</li>
+          </ul>
+
+          <div class="importante">
+            <strong>📌 Recuerda:</strong> Siempre verifica. Es la forma más rápida de detectar errores.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 4: Geometría y pensamiento visual",
+        titulo: "Formas, áreas y perímetros",
+        contenido: `
+          <h2>Formas, áreas y perímetros</h2>
+          <p>La geometría nos entrena a pensar en el espacio y las relaciones visuales.</p>
+
+          <h3>Fórmulas esenciales</h3>
+          <ul>
+            <li><strong>Perímetro</strong>: suma de todos los lados.</li>
+            <li><strong>Área del rectángulo</strong>: base × altura.</li>
+            <li><strong>Área del triángulo</strong>: (base × altura) / 2.</li>
+            <li><strong>Área del círculo</strong>: π × radio².</li>
+            <li><strong>Circunferencia</strong>: 2 × π × radio.</li>
+          </ul>
+
+          <div class="tip">
+            <strong>💡 Consejo:</strong> No memorices solo la fórmula. Entiende de dónde sale. Ejemplo: el área del triángulo es la mitad de un rectángulo.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 4: Geometría y pensamiento visual",
+        titulo: "Teorema de Pitágoras y su poder",
+        contenido: `
+          <h2>Teorema de Pitágoras y su poder</h2>
+          <p>En un triángulo rectángulo: a² + b² = c² (donde c es la hipotenusa).</p>
+
+          <h3>¿Para qué sirve realmente?</h3>
+          <ul>
+            <li>Calcular distancias.</li>
+            <li>Verificar si un ángulo es recto.</li>
+            <li>Base de la trigonometría y de muchas aplicaciones en física e ingeniería.</li>
+          </ul>
+
+          <h3>Ejercicio mental</h3>
+          <p>Si un cateto mide 3 y el otro 4, ¿cuánto mide la hipotenusa?<br>
+          3² + 4² = 9 + 16 = 25 → √25 = 5. El famoso triángulo 3-4-5.</p>
+
+          <div class="importante">
+            <strong>📌 Práctica:</strong> Busca triángulos rectángulos en tu entorno (esquinas de habitaciones, pantallas, etc.) y estima medidas usando Pitágoras.
+          </div>
+        `
+      }
+    ];
+
+    initCourse("matematicas-desde-cero", lessons);
+  </script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión del tiempo digital | Cursos</title>
+  <link rel="stylesheet" href="estilos-curso.css">
+  <style>
+    .hidden { display: none !important; }
+    .btn-complete.completada {
+      background: #2ecc71 !important;
+      color: white !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="auth-loading" class="estado-mensaje">
+    <h2>Cargando tu progreso...</h2>
+    <p>Verificando sesión con Firebase</p>
+  </div>
+
+  <div id="no-auth" class="estado-mensaje hidden">
+    <h2>Debes iniciar sesión</h2>
+    <p>Para acceder a este curso y guardar tu progreso necesitas estar logueado.</p>
+    <a href="../login.html" class="btn btn-primary">Ir a Ingresar</a>
+  </div>
+
+  <div id="curso-app" class="hidden">
+    <header class="curso-header">
+      <a href="../index.html" class="logo">
+        <span style="font-size:1.4rem">📚</span>
+        <span>Volver a Cursos</span>
+      </a>
+      <div class="user-info">
+        <span id="user-name">Usuario</span>
+        <div class="avatar" id="user-avatar">U</div>
+        <button onclick="logout()" class="btn btn-secondary" style="padding:6px 14px;font-size:0.85rem;margin-left:8px;">Salir</button>
+      </div>
+    </header>
+
+    <div class="curso-container">
+      <aside class="sidebar">
+        <div class="curso-titulo">Gestión del tiempo digital</div>
+        <div class="curso-meta">
+          <span>⏱️ 4 semanas</span>
+          <span>⭐ 4.8</span>
+          <span style="background:#e8f5e9;color:#2e7d32;padding:2px 8px;border-radius:12px;font-size:0.75rem;">NUEVO</span>
+        </div>
+
+        <div class="progress-box">
+          <div class="label">
+            <span>Tu progreso</span>
+            <span id="progress-percent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="fill" id="progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div id="modulos-lista" class="modulos"></div>
+      </aside>
+
+      <main class="contenido">
+        <div class="contenido-header">
+          <div class="breadcrumb" id="breadcrumb">Módulo 1 → Lección 1</div>
+          <h1 id="leccion-titulo">Cargando...</h1>
+        </div>
+
+        <div class="leccion-body">
+          <div id="leccion-contenido"></div>
+
+          <div class="acciones">
+            <button id="btn-prev" class="btn btn-secondary" onclick="prevLesson()">← Anterior</button>
+            <button id="btn-complete" class="btn btn-primary" onclick="markComplete()">Marcar como completada</button>
+            <button id="btn-next" class="btn btn-primary" onclick="nextLesson()">Siguiente lección →</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initCourse } from './firebase-curso.js';
+
+    const lessons = [
+      {
+        modulo: "Módulo 1: Diagnóstico digital",
+        titulo: "¿Cuánto tiempo real te roban las pantallas?",
+        contenido: `
+          <h2>¿Cuánto tiempo real te roban las pantallas?</h2>
+          <p>Antes de cambiar hábitos, necesitas datos reales. La mayoría de las personas subestiman enormemente el tiempo que pasan en el teléfono.</p>
+
+          <h3>Ejercicio de diagnóstico (hazlo ahora)</h3>
+          <ol>
+            <li>Abre el tiempo de uso de tu teléfono (Tiempo de pantalla en iOS / Bienestar digital en Android).</li>
+            <li>Anota el promedio de las últimas 7 días.</li>
+            <li>Identifica las 3 apps que más tiempo consumen.</li>
+          </ol>
+
+          <div class="tip">
+            <strong>💡 Dato impactante:</strong> El usuario promedio toca su teléfono más de 2.500 veces al día. Cada interrupción cuesta entre 15 y 25 minutos de re-enfoque.
+          </div>
+
+          <h3>Las 3 categorías de tiempo digital</h3>
+          <ul>
+            <li><strong>Tiempo útil</strong>: trabajo, aprendizaje, comunicación necesaria.</li>
+            <li><strong>Tiempo de ocio consciente</strong>: series, juegos o redes que eliges deliberadamente.</li>
+            <li><strong>Tiempo zombie</strong>: scroll infinito sin propósito. Este es el que vamos a atacar.</li>
+          </ul>
+        `
+      },
+      {
+        modulo: "Módulo 1: Diagnóstico digital",
+        titulo: "El costo oculto de las notificaciones",
+        contenido: `
+          <h2>El costo oculto de las notificaciones</h2>
+          <p>Cada notificación es una invitación a interrumpir tu pensamiento profundo.</p>
+
+          <h3>Qué ocurre en tu cerebro</h3>
+          <p>Cuando recibes una notificación, se activa el sistema de recompensa (dopamina). Aunque no abras la app, tu atención ya se fragmentó.</p>
+
+          <h3>Auditoría de notificaciones (acción inmediata)</h3>
+          <ol>
+            <li>Ve a Configuración → Notificaciones.</li>
+            <li>Desactiva <strong>todas</strong> las notificaciones excepto:</li>
+            <ul>
+              <li>Llamadas y mensajes de contactos favoritos.</li>
+              <li>Alarmas y recordatorios importantes.</li>
+              <li>Apps de trabajo críticas (si aplica).</li>
+            </ul>
+            <li>Para el resto: solo permite notificaciones cuando abras la app.</li>
+          </ol>
+
+          <div class="importante">
+            <strong>📌 Regla de oro:</strong> Si una app no es esencial para tu vida o trabajo en este momento, no necesita notificarte.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 2: Recuperar el control",
+        titulo: "Diseña tu entorno digital a tu favor",
+        contenido: `
+          <h2>Diseña tu entorno digital a tu favor</h2>
+          <p>La fuerza de voluntad es limitada. Es mucho más efectivo diseñar el entorno para que las buenas decisiones sean las más fáciles.</p>
+
+          <h3>Cambios de alto impacto en el teléfono</h3>
+          <ul>
+            <li><strong>Escala de grises</strong>: activa el modo escala de grises. Las apps se vuelven mucho menos adictivas.</li>
+            <li><strong>Pantalla de inicio minimalista</strong>: solo 4-6 apps esenciales. El resto en carpetas o en la biblioteca.</li>
+            <li><strong>Elimina redes sociales de la pantalla principal</strong> (o desinstálalas y úsalas solo desde el navegador).</li>
+            <li><strong>Activa “No molestar” programado</strong> durante tus horas de mayor productividad.</li>
+          </ul>
+
+          <div class="tip">
+            <strong>💡 Truco avanzado:</strong> Cambia la pantalla de bloqueo por una frase que te recuerde tu objetivo (“¿Esto me acerca a lo que quiero?”).
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 2: Recuperar el control",
+        titulo: "Bloques de enfoque profundo",
+        contenido: `
+          <h2>Bloques de enfoque profundo</h2>
+          <p>El trabajo de alto valor (estudiar, crear, pensar) requiere períodos largos sin interrupciones.</p>
+
+          <h3>Cómo implementar bloques de 90 minutos</h3>
+          <ol>
+            <li>Elige la tarea más importante del día.</li>
+            <li>Pon el teléfono en otra habitación o en un cajón.</li>
+            <li>Activa “No molestar” en el computador.</li>
+            <li>Trabaja 90 minutos seguidos.</li>
+            <li>Descansa 15-20 minutos de verdad (camina, estira, mira al horizonte).</li>
+          </ol>
+
+          <h3>La regla de las 2 listas</h3>
+          <p>Cada mañana escribe:</p>
+          <ul>
+            <li><strong>Lista A</strong>: las 1-3 tareas que realmente importan (hazlas en bloques de enfoque).</li>
+            <li><strong>Lista B</strong>: todo lo demás (puedes hacerlo en momentos de menor energía).</li>
+          </ul>
+
+          <div class="importante">
+            <strong>📌 Recuerda:</strong> No se trata de hacer más cosas. Se trata de hacer las cosas correctas sin que el ruido digital te robe la capacidad de pensar.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 3: Hábitos digitales saludables",
+        titulo: "Rutinas de desconexión",
+        contenido: `
+          <h2>Rutinas de desconexión</h2>
+          <p>Tu cerebro necesita momentos reales de aburrimiento y descanso para consolidar aprendizajes y regenerarse.</p>
+
+          <h3>Rutina nocturna anti-pantallas</h3>
+          <ul>
+            <li>60 minutos antes de dormir: nada de pantallas brillantes.</li>
+            <li>Usa luz cálida y actividades analógicas (lectura en papel, estiramientos, conversación).</li>
+            <li>Carga el teléfono fuera de la habitación.</li>
+          </ul>
+
+          <h3>El domingo digital (o medio domingo)</h3>
+          <p>Una vez a la semana, experimenta con un bloque de 4-6 horas completamente libre de pantallas no esenciales. Notarás la diferencia en claridad mental.</p>
+
+          <div class="tip">
+            <strong>💡 Sustitutos poderosos:</strong> Cuando sientas el impulso de agarrar el teléfono, prueba: 10 sentadillas, beber un vaso de agua, mirar por la ventana 60 segundos, o escribir una frase en un cuaderno.
+          </div>
+        `
+      },
+      {
+        modulo: "Módulo 3: Hábitos digitales saludables",
+        titulo: "Tu plan personal de gestión digital",
+        contenido: `
+          <h2>Tu plan personal de gestión digital</h2>
+          <p>Vamos a construir tu sistema personalizado.</p>
+
+          <h3>Paso 1: Define tus reglas no negociables</h3>
+          <p>Ejemplos:</p>
+          <ul>
+            <li>No redes sociales antes de las 10 a.m.</li>
+            <li>Teléfono en otra habitación durante bloques de estudio.</li>
+            <li>Una hora al día completamente offline.</li>
+          </ul>
+
+          <h3>Paso 2: Elige tus herramientas de apoyo</h3>
+          <ul>
+            <li>Apps de bloqueo (Freedom, Cold Turkey, Forest, StayFocusd).</li>
+            <li>Modo escala de grises.</li>
+            <li>Temporizadores visuales.</li>
+          </ul>
+
+          <h3>Paso 3: Revisión semanal (10 minutos)</h3>
+          <p>Cada domingo pregunta:</p>
+          <ol>
+            <li>¿Cuánto tiempo zombie tuve esta semana?</li>
+            <li>¿Qué regla se me hizo más difícil de cumplir?</li>
+            <li>¿Qué voy a ajustar la próxima semana?</li>
+          </ol>
+
+          <div class="importante">
+            <strong>🎯 Objetivo final:</strong> Que la tecnología trabaje para ti, no al revés. Tú decides cuándo y cómo usarla.
+          </div>
+        `
+      }
+    ];
+
+    initCourse("gestion-tiempo-digital", lessons);
+  </script>
+</body>
+</html>
