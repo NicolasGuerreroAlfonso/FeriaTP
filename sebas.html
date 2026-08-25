@@ -4,11 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AulaActiva</title>
-    <link rel="stylesheet" href="styles.css">
+    
+    <link rel="stylesheet" href]="sebas.js">
     <script src="script.js"></script>
 </head>
 <body>
     
+
+<title>Aula Activa</title>
+
+    <link rel="stylesheet" href="sebas.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <div class="logo-icon">📚</div>
+            <span>Aula Activa</span>
+        </div>
+    </header>
+
+    <main class="contenedor">
+
+        <!-- LADO IZQUIERDO -->
+        <section class="presentacion">
+
+            <span class="proyecto">PROYECTO TECNOMATRIX</span>
+
+            <h1>
+                Vuelve al aula activa
+                <br>
+                cuando quieras.
+            </h1>
+
+            <p class="descripcion">
+                Tu cuenta guarda tu progreso de enfoque,
+                no importa desde qué dispositivo entres.
+            </p>
+
+            <div class="beneficios">
+
+                <div class="beneficio amarillo">
+                    <span>🍅</span>
+                    <p>Pomodoro conectado a tu progreso</p>
+                </div>
+
+                <div class="beneficio azul">
+                    <span>🎯</span>
+                    <p>Seguimiento en tiempo real</p>
+                </div>
+
+                <div class="beneficio verde">
+                    <span>📊</span>
+                    <p>Acceso desde celular o computador</p>
+                </div>
+
+                <div class="beneficio morado">
+                    <span>🏆</span>
+                    <p>Insignias por tus logros</p>
+                </div>
+
+                <div class="beneficio naranja">
+                    <span>⭐</span>
+                    <p>Recompensas que te motivan</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LADO DERECHO -->
+        <section class="login">
+
+            <a href="#" class="volver">← Volver al inicio</a>
+
+            <h2>Entrar al aula activa</h2>
+
+            <p class="subtitulo">
+                Accede con tu cuenta o crea una nueva.
+            </p>
+
+            <!-- BOTONES -->
+            <div class="tabs">
+
+                <button id="btnLogin" class="tab activo">
+                    👦 Iniciar sesión
+                </button>
+
+                <button id="btnRegistro" class="tab">
+                    👧 Registrarme
+                </button>
+
+            </div>
+
+
+            <!-- FORMULARIO LOGIN -->
+            <form id="formLogin">
+
+                <label for="correo">Correo electrónico</label>
+
+                <input
+                    type="email"
+                    id="correo"
+                    placeholder="Ingresa tu correo"
+                    required
+                >
+
+
+                <label for="password">Contraseña</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Ingresa tu contraseña"
+                    required
+                >
+
+
+                <button type="submit" class="btn-entrar">
+                    ⭐ Entrar
+                </button>
+
+            </form>
+
+
+            <!-- FORMULARIO REGISTRO -->
+
+            <form id="formRegistro" class="oculto">
+
+                <label for="nombre">Nombre</label>
+
+                <input
+                    type="text"
+                    id="nombre"
+                    placeholder="Ingresa tu nombre"
+                    required
+                >
+
+                <label for="correoRegistro">Correo electrónico</label>
+
+                <input
+                    type="email"
+                    id="correoRegistro"
+                    placeholder="Ingresa tu correo"
+                    required
+                >
+
+                <label for="passwordRegistro">Contraseña</label>
+
+                <input
+                    type="password"
+                    id="passwordRegistro"
+                    placeholder="Crea una contraseña"
+                    required
+                >
+
+                <button type="submit" class="btn-entrar">
+                    🚀 Crear cuenta
+                </button>
+
+            </form>
+
+
+            <div class="mensaje">
+                🔒 Tu cuenta se guarda de forma segura y podrás
+                acceder a tu progreso desde cualquier dispositivo.
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+
 <head>
     <meta charset="UTF-8">
 
@@ -67,7 +239,7 @@
                 Aprende programación controlando un personaje
                 mediante código.
             </p>
-            <a href="https://codecombat.com/" target="_blank">
+            <a href="https://cssgridgarden.com/#es" target="_blank">
                 Jugar ahora →
             </a>
         </article>
