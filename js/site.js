@@ -1,3 +1,47 @@
+// ---------- modo oscuro ----------
+(function(){
+  var root = document.documentElement;
+  var desktopToggle = document.getElementById('theme-toggle');
+  var mobileToggle = document.getElementById('theme-toggle-mobile');
+
+  function updateButtons(isDark){
+    var icon = isDark ? '☀️' : '🌙';
+    var label = isDark ? 'Desactivar modo oscuro' : 'Activar modo oscuro';
+    if (desktopToggle){
+      desktopToggle.textContent = icon;
+      desktopToggle.setAttribute('aria-label', label);
+      desktopToggle.setAttribute('title', label);
+    }
+    if (mobileToggle){
+      mobileToggle.textContent = icon + (isDark ? ' Modo claro' : ' Modo oscuro');
+      mobileToggle.setAttribute('aria-label', label);
+      mobileToggle.setAttribute('title', label);
+    }
+  }
+
+  var savedTheme = localStorage.getItem('aula-activa-theme');
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+
+  if (isDark) root.setAttribute('data-theme', 'dark');
+  updateButtons(isDark);
+
+  function toggleTheme(){
+    isDark = root.getAttribute('data-theme') !== 'dark';
+    if (isDark) {
+      root.setAttribute('data-theme', 'dark');
+      localStorage.setItem('aula-activa-theme', 'dark');
+    } else {
+      root.removeAttribute('data-theme');
+      localStorage.setItem('aula-activa-theme', 'light');
+    }
+    updateButtons(isDark);
+  }
+
+  if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
+  if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
+})();
+
 // ---------- mobile menu ----------
 (function(){
   var hamburger = document.getElementById('hamburger');
