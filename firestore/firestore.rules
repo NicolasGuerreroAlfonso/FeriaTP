@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /ratings/{ratingId} {
+      // Las valoraciones y el promedio son públicos para poder mostrarlos
+      // en la página principal.
+      allow read: if true;
+
+      // Permite enviar una valoración de 1 a 5 estrellas, con texto limitado.
+      allow create: if
+        request.resource.data.rating is int &&
+        request.resource.data.rating >= 1 &&
+        request.resource.data.rating <= 5 &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() <= 80 &&
+        request.resource.data.comment is string &&
+        request.resource.data.comment.size() <= 500;
+
+      allow update, delete: if false;
+    }
+  }
+}
