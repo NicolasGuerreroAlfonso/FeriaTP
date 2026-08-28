@@ -5,7 +5,7 @@
 
 const firebaseConfig = {
   apiKey: "AIzaSyCRD15-HzvmCvt5dOnEgsGSTkE5AN-16DM",
-  authDomain: "aulaactiva-ca551.firebaseapp.com",
+  authDomain: "aulaactiva.lat",
   projectId: "aulaactiva-ca551",
   storageBucket: "aulaactiva-ca551.firebasestorage.app",
   messagingSenderId: "797030185664",
