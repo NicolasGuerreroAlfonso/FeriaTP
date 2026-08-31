@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aula Activa – Menos distracción, más enfoque</title>
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="../css/styles.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 
 <header class="navbar">
   <div class="container nav-inner">
-    <img src="assets/logo.png" alt="Aula Activa" class="nav-logo">
+    <img src="../assets/logo.png" alt="Aula Activa" class="nav-logo">
     <nav class="nav-links">
       <a href="#inicio">Inicio</a>
       <a href="#nosotros">Nosotros</a>
@@ -21,8 +21,14 @@
       <a href="#testimonios">Testimonios</a>
       <a href="#contacto">Contacto</a>
       <a href="https://flukeout.github.io/" target="_blank" rel="noopener noreferrer">Juego</a>
+      <a href="perfil.html" class="profile-nav profile-nav-desktop hidden" id="profileNav" aria-label="Abrir mi perfil" title="Mi perfil">
+        <span class="profile-nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false"><path d="M12 12a4.2 4.2 0 1 0 0-8.4A4.2 4.2 0 0 0 12 12Zm0 2.2c-4.5 0-8 2.35-8 5.25 0 .86.7 1.55 1.55 1.55h12.9c.85 0 1.55-.69 1.55-1.55 0-2.9-3.5-5.25-8-5.25Z"/></svg>
+        </span>
+      </a>
     </nav>
-    <a href="login.html" class="btn-nav">Ingresar</a>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Activar modo oscuro" title="Modo oscuro">🌙</button>
+    <a href="login.html" class="btn-nav" id="loginNavBtn">Ingresar</a>
     <button class="hamburger" id="hamburger" aria-label="Menú">&#9776;</button>
   </div>
   <div class="mobile-menu hidden" id="mobile-menu">
@@ -32,7 +38,14 @@
     <a href="#testimonios">Testimonios</a>
     <a href="#contacto">Contacto</a>
     <a href="https://flukeout.github.io/" target="_blank" rel="noopener noreferrer">Juego</a>
-    <a href="login.html" class="btn-mobile">Ingresar</a>
+    <a href="perfil.html" class="profile-nav profile-nav-mobile hidden" id="profileNavMobile" aria-label="Abrir mi perfil">
+      <span class="profile-nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path d="M12 12a4.2 4.2 0 1 0 0-8.4A4.2 4.2 0 0 0 12 12Zm0 2.2c-4.5 0-8 2.35-8 5.25 0 .86.7 1.55 1.55 1.55h12.9c.85 0 1.55-.69 1.55-1.55 0-2.9-3.5-5.25-8-5.25Z"/></svg>
+      </span>
+      <span>Mi perfil</span>
+    </a>
+    <button class="theme-toggle mobile-theme-toggle" id="theme-toggle-mobile" type="button" aria-label="Activar modo oscuro" title="Modo oscuro">🌙 Modo oscuro</button>
+    <a href="login.html" class="btn-mobile" id="loginNavBtnMobile">Ingresar</a>
   </div>
 </header>
 
@@ -72,7 +85,7 @@
 <section class="stats">
   <div class="container stats-grid">
     <div class="stat-card"><span class="stat-num">6</span><span class="stat-label">Cursos Disponibles</span></div>
-    <div class="stat-card"><span class="stat-num">5</span><span class="stat-label">Integrantes de Tecnomatrix</span></div>
+    <div class="stat-card"><span class="stat-num">6</span><span class="stat-label">Integrantes de Tecnomatrix</span></div>
     <div class="stat-card"><span class="stat-num">2</span><span class="stat-label">Programadores</span></div>
     <div class="stat-card"><span class="stat-num">6</span><span class="stat-label">Meses de desarrollo</span></div>
   </div>
@@ -160,7 +173,7 @@
 <section class="section" id="testimonios">
   <div class="container reveal">
     <div class="section-header">
-      <span class="eyebrow eyebrow--green">Lo que dicen</span>
+      <span class="eyebrow eyebrow--green">Las</span>
       <span class="eyebrow eyebrow--green">Opiniones De Los </span>
       <h2>Estudiantes que ya <span class="highlight">cambiaron su motivación</span></h2>
     </div>
@@ -180,6 +193,45 @@
         <p>"Por fin una plataforma que entiende que los estudiantes necesitamos estructura y motivación a la vez."</p>
         <div class="testi-author"><div class="avatar av-yellow">DM</div><div><strong>Diego Manchego</strong><span>Estudiante AML</span></div></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="section rating-section" id="valoracion">
+  <div class="container reveal">
+    <div class="section-header">
+      <span class="eyebrow eyebrow--green">Tu opinión importa</span>
+      <h2>Valora <span class="highlight">Aula Activa</span></h2>
+      <p>Ayúdanos a mejorar la plataforma. Tu valoración se suma automáticamente al promedio.</p>
+    </div>
+    <div class="rating-layout">
+      <div class="rating-summary">
+        <div class="rating-average" id="ratingAverage">—</div>
+        <div class="rating-stars" id="ratingStars" aria-label="Valoración promedio">☆☆☆☆☆</div>
+        <p><strong id="ratingCount">0</strong> valoraciones</p>
+      </div>
+      <form class="rating-form" id="rating-form">
+        <label>¿Qué puntuación le das a Aula Activa?</label>
+        <div class="star-picker" role="radiogroup" aria-label="Selecciona una puntuación">
+          <button type="button" data-rating="1" aria-label="1 estrella">★</button>
+          <button type="button" data-rating="2" aria-label="2 estrellas">★</button>
+          <button type="button" data-rating="3" aria-label="3 estrellas">★</button>
+          <button type="button" data-rating="4" aria-label="4 estrellas">★</button>
+          <button type="button" data-rating="5" aria-label="5 estrellas">★</button>
+        </div>
+        <input type="hidden" id="ratingValue" value="">
+        <div class="form-group">
+          <label for="ratingName">Nombre (opcional)</label>
+          <input type="text" id="ratingName" maxlength="80" placeholder="Tu nombre">
+        </div>
+        <div class="form-group">
+          <label for="ratingComment">Comentario (opcional)</label>
+          <textarea id="ratingComment" rows="3" maxlength="500" placeholder="Cuéntanos qué te parece..."></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Enviar valoración</button>
+        <p class="form-success hidden" id="rating-success">⭐ ¡Gracias! Tu valoración fue registrada.</p>
+        <p class="form-msg error hidden" id="rating-error"></p>
+      </form>
     </div>
   </div>
 </section>
@@ -225,7 +277,7 @@
 <footer class="footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <img src="assets/logo.png" alt="Aula Activa" class="footer-logo">
+      <img src="../assets/logo.png" alt="Aula Activa" class="footer-logo">
       <p>Menos distracción, más enfoque.<br>Más acción, mejores resultados.</p>
     </div>
     <div class="footer-links">
@@ -250,6 +302,13 @@
   </div>
 </footer>
 
-<script src="js/site.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="../js/firebase-config.js"></script>
+<script src="../js/firebase-init.js"></script>
+<script src="../js/site.js"></script>
+<script src="../js/pomodoro.js"></script>
+
 </body>
 </html>

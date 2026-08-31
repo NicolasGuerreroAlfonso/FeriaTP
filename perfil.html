@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi perfil — Aula Activa</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;">
+      <img src="../assets/logo.png" alt="Aula Activa" class="nav-logo">
+      <span style="color:var(--chalk);font-family:'Fredoka',sans-serif;font-weight:600;">Aula Activa</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Inicio</a>
+      <a href="index.html#cursos">Cursos</a>
+      <a href="index.html#valoracion">Valoraciones</a>
+    </nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Activar modo oscuro" title="Modo oscuro">🌙</button>
+    <button class="hamburger" id="hamburger" type="button" aria-label="Menú">&#9776;</button>
+  </div>
+  <div class="mobile-menu hidden" id="mobile-menu">
+    <a href="index.html">Inicio</a>
+    <a href="index.html#cursos">Cursos</a>
+    <a href="index.html#valoracion">Valoraciones</a>
+    <button class="theme-toggle mobile-theme-toggle" id="theme-toggle-mobile" type="button">🌙 Modo oscuro</button>
+  </div>
+</header>
+
+<main class="profile-page">
+  <div class="container profile-page-inner">
+    <a href="index.html" class="back-link">← Volver al inicio</a>
+    <div id="profileLoading" class="profile-loading">Comprobando tu sesión…</div>
+    <section id="profileContent" class="profile-content hidden" aria-live="polite">
+      <div class="profile-heading">
+        <div>
+          <span class="eyebrow eyebrow--green">Cuenta</span>
+          <h1 id="profileTitle">Mi perfil</h1>
+          <p class="sub">Administra tus datos y consulta tu progreso en Aula Activa.</p>
+        </div>
+        <div class="profile-avatar" id="profileAvatar" aria-hidden="true">AA</div>
+      </div>
+
+      <div class="profile-grid">
+        <section class="profile-card">
+          <div class="profile-card-head">
+            <div>
+              <span class="eyebrow eyebrow--blue">Información personal</span>
+              <h2>Tus datos</h2>
+            </div>
+            <span class="profile-save-state" id="profileSaveState"></span>
+          </div>
+          <form id="profileForm">
+            <div class="field">
+              <label for="editName">Nombre</label>
+              <input id="editName" type="text" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="editEmail">Correo electrónico</label>
+              <input id="editEmail" type="email" autocomplete="email" required>
+            </div>
+            <div class="field">
+              <label for="editPassword">Nueva contraseña</label>
+              <input id="editPassword" type="password" autocomplete="new-password" minlength="6" placeholder="Déjalo vacío para conservar la actual">
+            </div>
+            <button type="submit" class="btn-primary full-btn">Guardar cambios</button>
+            <p class="privacy-note">Para cambiar correo o contraseña, Firebase puede solicitar que vuelvas a iniciar sesión por seguridad.</p>
+          </form>
+        </section>
+
+        <section class="profile-card">
+          <div class="profile-card-head">
+            <div>
+              <span class="eyebrow eyebrow--yellow">Progreso</span>
+              <h2>Tu enfoque</h2>
+            </div>
+          </div>
+          <div class="profile-stat large-stat">
+            <div class="num mono" id="profileSessions">0</div>
+            <div class="lbl">bloques de enfoque completados</div>
+          </div>
+          <div class="mini-profile-row"><span>Rol</span><strong id="profileRole">Estudiante</strong></div>
+          <div class="mini-profile-row"><span>Sesión</span><strong id="profileSessionState">Activa</strong></div>
+          <a href="index.html#inicio" class="btn-secondary full-btn profile-go-home">Ir al Pomodoro</a>
+        </section>
+      </div>
+
+      <div class="profile-danger">
+        <div>
+          <strong>Cerrar sesión</strong>
+          <p>Tu información guardada en Firebase no se eliminará.</p>
+        </div>
+        <button class="btn-secondary" id="logoutBtn" type="button">Cerrar sesión</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="../js/firebase-config.js"></script>
+<script src="../js/firebase-init.js"></script>
+<script src="../js/site.js"></script>
+<script>
+(function(){
+  'use strict';
+  var auth = window.aulaAuth || firebase.auth();
+  var db = firebase.firestore();
+  var loading = document.getElementById('profileLoading');
+  var content = document.getElementById('profileContent');
+  var form = document.getElementById('profileForm');
+  var logout = document.getElementById('logoutBtn');
+  var saveState = document.getElementById('profileSaveState');
+
+  function showLoading(){ loading.classList.remove('hidden'); content.classList.add('hidden'); }
+  function showContent(){ loading.classList.add('hidden'); content.classList.remove('hidden'); }
+  function showError(message){ loading.textContent = message; }
+  function firstName(name){ return (name || 'Usuario').trim().split(/\s+/)[0]; }
+  function initials(name){
+    var parts = (name || 'Aula Activa').trim().split(/\s+/).slice(0,2);
+    return parts.map(function(p){ return p.charAt(0).toUpperCase(); }).join('') || 'AA';
+  }
+
+  async function loadProfile(user){
+    try{
+      var snap = await db.collection('users').doc(user.uid).get();
+      var data = snap.exists ? snap.data() : {};
+      var name = data.name || user.displayName || 'Usuario';
+      var email = (data.email && data.email.indexOf('@aula-activa.local') === -1) ? data.email : (user.email || '');
+      document.getElementById('profileTitle').textContent = 'Hola, ' + firstName(name);
+      document.getElementById('profileAvatar').textContent = initials(name);
+      document.getElementById('editName').value = name;
+      document.getElementById('editEmail').value = email;
+      document.getElementById('profileRole').textContent = data.role || 'Estudiante';
+      document.getElementById('profileSessions').textContent = Number(data.sessionsCompleted || 0);
+      showContent();
+    } catch(err){
+      console.error(err);
+      showError('No se pudo cargar tu perfil. Revisa tu conexión e inténtalo nuevamente.');
+    }
+  }
+
+  auth.onAuthStateChanged(function(user){
+    if (!user){
+      window.location.replace('login.html');
+      return;
+    }
+    loadProfile(user);
+  });
+
+  form.addEventListener('submit', async function(event){
+    event.preventDefault();
+    var user = auth.currentUser;
+    if (!user){ window.location.replace('login.html'); return; }
+    var name = document.getElementById('editName').value.trim();
+    var newEmail = document.getElementById('editEmail').value.trim().toLowerCase();
+    var newPassword = document.getElementById('editPassword').value;
+    var button = form.querySelector('button[type="submit"]');
+    if (!name || !newEmail){ saveState.textContent='Completa nombre y correo.'; saveState.className='profile-save-state error'; return; }
+    button.disabled = true; button.textContent = 'Guardando…'; saveState.textContent='';
+    try{
+      if (newEmail !== (user.email || '') && newEmail.indexOf('@aula-activa.local') === -1){ await user.updateEmail(newEmail); }
+      if (newPassword){ if (newPassword.length < 6) throw new Error('WEAK_PASSWORD'); await user.updatePassword(newPassword); }
+      await db.collection('users').doc(user.uid).set({name:name,email:newEmail,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      document.getElementById('profileTitle').textContent = 'Hola, ' + firstName(name);
+      document.getElementById('profileAvatar').textContent = initials(name);
+      document.getElementById('editPassword').value='';
+      saveState.textContent='✓ Cambios guardados'; saveState.className='profile-save-state ok';
+    } catch(err){
+      console.error(err);
+      var msg='No se pudieron guardar los cambios.';
+      if (err.code === 'auth/requires-recent-login') msg='Por seguridad, cierra sesión y vuelve a iniciar sesión antes de cambiar correo o contraseña.';
+      else if (err.code === 'auth/email-already-in-use') msg='Ese correo ya está asociado a otra cuenta.';
+      else if (err.code === 'auth/invalid-email') msg='El correo electrónico no es válido.';
+      else if (err.message === 'WEAK_PASSWORD') msg='La nueva contraseña debe tener al menos 6 caracteres.';
+      saveState.textContent=msg; saveState.className='profile-save-state error';
+    } finally { button.disabled=false; button.textContent='Guardar cambios'; }
+  });
+
+  logout.addEventListener('click', function(){ auth.signOut().then(function(){ window.location.replace('login.html'); }); });
+  showLoading();
+})();
+</script>
+
+</body>
+</html>

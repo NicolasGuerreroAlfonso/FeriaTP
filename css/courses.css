@@ -71,3 +71,55 @@ body.modal-open{overflow:hidden}
  .lesson-actions{justify-content:stretch}
  .lesson-actions button{flex:1}
 }
+
+
+/* Refuerzo de legibilidad para modo oscuro en la experiencia de cursos */
+html[data-theme="dark"] .course-hero{background:#0B1711;color:#F5F7F3;}
+html[data-theme="dark"] .course-content{background:#101813;color:#F1F3EE;}
+html[data-theme="dark"] .course-progress-card,
+html[data-theme="dark"] .course-intro-card,
+html[data-theme="dark"] .lesson-card,
+html[data-theme="dark"] .syllabus-card,
+html[data-theme="dark"] .lesson-dialog{background:#202A24;color:#F1F3EE;border-color:#46554B;}
+html[data-theme="dark"] .course-hero h1,
+html[data-theme="dark"] .module-heading h2,
+html[data-theme="dark"] .lesson-card h3,
+html[data-theme="dark"] .syllabus-card h3,
+html[data-theme="dark"] .syllabus-module-title strong,
+html[data-theme="dark"] .lesson-dialog h2{color:#FFFFFF;}
+html[data-theme="dark"] .course-description{color:#D7E4DB;}
+html[data-theme="dark"] .lesson-card p,
+html[data-theme="dark"] .course-progress-card p,
+html[data-theme="dark"] .syllabus-lesson{color:#C7D1CA;}
+html[data-theme="dark"] .lesson-module,
+html[data-theme="dark"] .lesson-kicker,
+html[data-theme="dark"] .module-heading>span{color:#AEBBB2;}
+html[data-theme="dark"] .syllabus-module{border-color:#46554B;}
+html[data-theme="dark"] .lesson-number{background:#34443A;color:#FFFFFF;}
+html[data-theme="dark"] .progress-bar{background:#34443A;}
+html[data-theme="dark"] .activity-box{background:#173126;color:#F1F3EE;}
+html[data-theme="dark"] .modal-close{color:#FFFFFF;}
+
+/* Contraste extra: textos secundarios claramente visibles en modo oscuro */
+html[data-theme="dark"] .course-progress-card p,
+html[data-theme="dark"] .lesson-card p,
+html[data-theme="dark"] .syllabus-lesson,
+html[data-theme="dark"] .lesson-text,
+html[data-theme="dark"] .activity-box p {
+  color:#F1F5F2;
+}
+html[data-theme="dark"] .lesson-module,
+html[data-theme="dark"] .lesson-kicker,
+html[data-theme="dark"] .module-heading>span {
+  color:#E0E8E2;
+}
+html[data-theme="dark"] .syllabus-lesson:hover,
+html[data-theme="dark"] .btn-lesson {
+  color:#FFFFFF;
+}
+html[data-theme="dark"] .course-meta-large {
+  color:#F5F7F5;
+}
+html[data-theme="dark"] .course-progress-card .progress-top {
+  color:#FFFFFF;
+}

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ingresar — Aula Activa</title>
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="../css/styles.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -14,9 +14,28 @@
 <header class="navbar">
   <div class="container nav-inner">
     <a href="index.html" style="display:flex;align-items:center;gap:10px;">
-      <img src="assets/logo.png" alt="Aula Activa" class="nav-logo">
+      <img src="../assets/logo.png" alt="Aula Activa" class="nav-logo">
       <span style="color:var(--chalk);font-family:'Fredoka',sans-serif;font-weight:600;">Aula Activa</span>
     </a>
+    <nav class="nav-links">
+      <a href="index.html">Inicio</a>
+      <a href="index.html#cursos">Cursos</a>
+      <a href="index.html#valoracion">Valoraciones</a>
+    </nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Activar modo oscuro" title="Modo oscuro">🌙</button>
+    <button class="hamburger" id="hamburger" type="button" aria-label="Menú">&#9776;</button>
+  </div>
+  <div class="mobile-menu hidden" id="mobile-menu">
+    <a href="index.html">Inicio</a>
+    <a href="index.html#cursos">Cursos</a>
+    <a href="index.html#valoracion">Valoraciones</a>
+    <a href="perfil.html" class="profile-nav profile-nav-mobile hidden" id="profileNavMobile" aria-label="Abrir mi perfil">
+      <span class="profile-nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path d="M12 12a4.2 4.2 0 1 0 0-8.4A4.2 4.2 0 0 0 12 12Zm0 2.2c-4.5 0-8 2.35-8 5.25 0 .86.7 1.55 1.55 1.55h12.9c.85 0 1.55-.69 1.55-1.55 0-2.9-3.5-5.25-8-5.25Z"/></svg>
+      </span>
+      <span>Mi perfil</span>
+    </a>
+    <button class="theme-toggle mobile-theme-toggle" id="theme-toggle-mobile" type="button">🌙 Modo oscuro</button>
   </div>
 </header>
 
@@ -38,18 +57,18 @@
 
       <div id="authViews">
         <h1 id="authTitle">Entrar al aula activa</h1>
-        <p class="sub" id="authSub">Accede con tu cuenta o crea una nueva.</p>
+        <p class="sub" id="authSub">Accede con tu cuenta para continuar.</p>
 
         <div class="tabs">
-          <button class="tab-btn active" data-tab="login">Iniciar sesión</button>
-          <button class="tab-btn" data-tab="register">Registrarme</button>
+          <button class="tab-btn active" data-tab="login" type="button">Iniciar sesión</button>
+          <button class="tab-btn" data-tab="register" type="button">Registrarme</button>
         </div>
 
         <div class="form-msg" id="formMsg"></div>
 
         <form id="loginForm">
           <div class="field">
-            <label for="loginUser">Correo Electronico</label>
+            <label for="loginUser">Correo electrónico o usuario</label>
             <input id="loginUser" type="text" autocomplete="username" required>
           </div>
           <div class="field">
@@ -62,11 +81,11 @@
         <form id="registerForm" style="display:none;">
           <div class="field">
             <label for="regName">Nombre</label>
-            <input id="regName" type="text" required>
+            <input id="regName" type="text" autocomplete="name" required>
           </div>
           <div class="field">
-            <label for="regUser">Correo Electronico</label>
-            <input id="regUser" type="text" required>
+            <label for="regUser">Correo electrónico</label>
+            <input id="regUser" type="email" autocomplete="email" required>
           </div>
           <div class="field">
             <label for="regRole">Rol</label>
@@ -79,54 +98,51 @@
           </div>
           <div class="field">
             <label for="regPass">Contraseña</label>
-            <input id="regPass" type="password" autocomplete="new-password" required>
+            <input id="regPass" type="password" autocomplete="new-password" minlength="6" required>
           </div>
           <button type="submit" class="btn-primary full-btn">Crear cuenta</button>
         </form>
 
-        <p class="privacy-note">Tu cuenta se guarda en la base de datos del proyecto Aula Activa y queda disponible la próxima vez que entres, desde cualquier dispositivo con los mismos datos que ingresaste.</p>
+        <p class="privacy-note">Tu cuenta se guarda de forma segura en TECNOMATRIX y tu sesión permanece iniciada en este dispositivo.</p>
       </div>
 
-      <div id="profileView" style="display:none;">
-        <span class="profile-role" id="profileRole">Estudiante</span>
-        <h1 id="profileName">Hola</h1>
-        <p class="sub">Este es tu progreso dentro de Aula Activa.</p>
-
-        <div class="profile-stat">
-          <div class="num mono" id="profileSessions">0</div>
-          <div class="lbl">bloques de enfoque completados con el Pomodoro</div>
+      <div class="login-pomodoro card-index timer-card">
+        <div class="login-pomodoro-title">
+          <div>
+            <span class="eyebrow eyebrow--green">Pomodoro</span>
+            <h2>Empieza a enfocarte</h2>
+          </div>
+          <span class="pomodoro-status">Concentrate!!</span>
         </div>
-
-        <div class="card-index timer-card" style="margin-bottom:18px;">
-          <div class="widget-tabs">
-            <button class="widget-tab active" id="modeFocus" data-mode="focus">Enfoque · 25:00</button>
-            <button class="widget-tab" id="modeBreak" data-mode="break">Pausa activa · 5:00</button>
-          </div>
-          <div class="timer-face">
-            <svg class="timer-ring" viewBox="0 0 200 200">
-              <circle class="ring-bg" cx="100" cy="100" r="90"/>
-              <circle class="ring-progress" id="ringProgress" cx="100" cy="100" r="90"/>
-            </svg>
-            <div class="timer-time mono" id="timerDisplay">25:00</div>
-          </div>
-          <div class="timer-controls">
-            <button class="btn-primary" id="timerStart" style="padding:9px 18px;font-size:13px;">Iniciar</button>
-            <button class="btn-secondary" id="timerReset" style="padding:9px 18px;font-size:13px;color:var(--ink);border-color:var(--ink);">Reiniciar</button>
-          </div>
-          <p class="timer-caption" id="timerCaption">Bloque de enfoque — HU‑01</p>
+        <div class="widget-tabs">
+          <button class="widget-tab active" id="modeFocus" data-mode="focus" type="button">Enfoque · 25:00</button>
+          <button class="widget-tab" id="modeBreak" data-mode="break" type="button">Pausa activa · 5:00</button>
         </div>
-
-        <button class="btn-secondary full-btn" id="logoutBtn" style="color:var(--ink);border-color:var(--ink);">Cerrar sesión</button>
+        <div class="timer-face">
+          <svg class="timer-ring" viewBox="0 0 200 200">
+            <circle class="ring-bg" cx="100" cy="100" r="90"/>
+            <circle class="ring-progress" id="ringProgress" cx="100" cy="100" r="90"/>
+          </svg>
+          <div class="timer-time mono" id="timerDisplay">25:00</div>
+        </div>
+        <div class="timer-controls">
+          <button class="btn-primary" id="timerStart" type="button">Iniciar</button>
+          <button class="btn-secondary" id="timerReset" type="button">Reiniciar</button>
+        </div>
+        <p class="timer-caption" id="timerCaption">No necesitas una cuenta para comenzar.</p>
       </div>
     </div>
   </div>
 </div>
 
-<script src="js/site.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
-<script src="js/auth.js"></script>
+<script src="../js/firebase-config.js"></script>
+<script src="../js/firebase-init.js"></script>
+<script src="../js/site.js"></script>
+<script src="../js/pomodoro.js"></script>
+<script src="../js/auth.js"></script>
+
 </body>
 </html>

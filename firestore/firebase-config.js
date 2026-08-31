@@ -3,9 +3,11 @@
 // 2. Reemplaza TODO lo de abajo por lo que te muestre Firebase.
 // 3. Guarda este archivo y sube el proyecto a GitHub — no necesitas tocar nada más.
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCRD15-HzvmCvt5dOnEgsGSTkE5AN-16DM",
   authDomain: "aulaactiva-ca551.firebaseapp.com",
+  databaseURL: "https://aulaactiva-ca551-default-rtdb.firebaseio.com",
   projectId: "aulaactiva-ca551",
   storageBucket: "aulaactiva-ca551.firebasestorage.app",
   messagingSenderId: "797030185664",

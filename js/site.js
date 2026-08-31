@@ -1,3 +1,47 @@
+// ---------- modo oscuro ----------
+(function(){
+  var root = document.documentElement;
+  var desktopToggle = document.getElementById('theme-toggle');
+  var mobileToggle = document.getElementById('theme-toggle-mobile');
+
+  function updateButtons(isDark){
+    var icon = isDark ? '☀️' : '🌙';
+    var label = isDark ? 'Desactivar modo oscuro' : 'Activar modo oscuro';
+    if (desktopToggle){
+      desktopToggle.textContent = icon;
+      desktopToggle.setAttribute('aria-label', label);
+      desktopToggle.setAttribute('title', label);
+    }
+    if (mobileToggle){
+      mobileToggle.textContent = icon + (isDark ? ' Modo claro' : ' Modo oscuro');
+      mobileToggle.setAttribute('aria-label', label);
+      mobileToggle.setAttribute('title', label);
+    }
+  }
+
+  var savedTheme = localStorage.getItem('aula-activa-theme');
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+
+  if (isDark) root.setAttribute('data-theme', 'dark');
+  updateButtons(isDark);
+
+  function toggleTheme(){
+    isDark = root.getAttribute('data-theme') !== 'dark';
+    if (isDark) {
+      root.setAttribute('data-theme', 'dark');
+      localStorage.setItem('aula-activa-theme', 'dark');
+    } else {
+      root.removeAttribute('data-theme');
+      localStorage.setItem('aula-activa-theme', 'light');
+    }
+    updateButtons(isDark);
+  }
+
+  if (desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
+  if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
+})();
+
 // ---------- mobile menu ----------
 (function(){
   var hamburger = document.getElementById('hamburger');
@@ -40,53 +84,109 @@
   });
 })();
 
-// ---------- hero demo timer (index.html — no login needed) ----------
+// ---------- icono de perfil según sesión ----------
 (function(){
-  var display = document.getElementById('timerDisplay');
-  var isLoginPage = document.getElementById('authViews');
-  if (!display || isLoginPage) return; // login page has its own timer wired in auth.js
-
-  var CIRC = 2 * Math.PI * 90;
-  var durations = { focus: 25*60, break: 5*60 };
-  var mode = 'focus';
-  var remaining = durations.focus;
-  var running = false;
-  var intervalId = null;
-
-  var ring = document.getElementById('ringProgress');
-  var caption = document.getElementById('timerCaption');
-  var startBtn = document.getElementById('timerStart');
-  var resetBtn = document.getElementById('timerReset');
-  var tabFocus = document.getElementById('modeFocus');
-  var tabBreak = document.getElementById('modeBreak');
-
-  function fmt(s){ var m = Math.floor(s/60); var sec = s%60; return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec; }
-  function render(){
-    display.textContent = fmt(remaining);
-    var frac = remaining / durations[mode];
-    ring.style.strokeDashoffset = CIRC * (1 - frac);
-    caption.textContent = mode === 'focus' ? 'Pruébalo — no necesitas cuenta' : 'Pausa activa · 5 min';
-    startBtn.textContent = running ? 'Pausar' : 'Iniciar';
+  var profileNav = document.querySelectorAll('.profile-nav');
+  var loginBtns = document.querySelectorAll('#loginNavBtn, #loginNavBtnMobile');
+  function apply(loggedIn){
+    profileNav.forEach(function(el){ el.classList.toggle('hidden', !loggedIn); });
+    loginBtns.forEach(function(el){ el.classList.toggle('hidden', loggedIn); });
   }
-  function setMode(m){
-    mode = m; running = false; clearInterval(intervalId);
-    remaining = durations[m];
-    tabFocus.classList.toggle('active', m==='focus');
-    tabBreak.classList.toggle('active', m==='break');
-    render();
+  apply(false);
+  if (typeof firebase === 'undefined' || !firebase.auth) return;
+  firebase.auth().onAuthStateChanged(function(user){ apply(!!user); });
+})();
+
+// ---------- valoraciones de la página ----------
+(function(){
+  var form = document.getElementById('rating-form');
+  if (!form || typeof firebase === 'undefined') return;
+
+  var db = firebase.firestore();
+  var valueInput = document.getElementById('ratingValue');
+  var stars = form.querySelectorAll('.star-picker button');
+  var success = document.getElementById('rating-success');
+  var error = document.getElementById('rating-error');
+  var average = document.getElementById('ratingAverage');
+  var count = document.getElementById('ratingCount');
+  var starsOutput = document.getElementById('ratingStars');
+
+  function paintSelected(value){
+    stars.forEach(function(btn){
+      btn.classList.toggle('selected', Number(btn.dataset.rating) <= value);
+    });
   }
-  function tick(){
-    remaining -= 1;
-    if (remaining <= 0){ remaining = 0; running = false; clearInterval(intervalId); render(); return; }
-    render();
-  }
-  startBtn.addEventListener('click', function(){
-    running = !running;
-    if (running){ intervalId = setInterval(tick, 1000); } else { clearInterval(intervalId); }
-    render();
+
+  stars.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var value = Number(btn.dataset.rating);
+      valueInput.value = value;
+      paintSelected(value);
+    });
   });
-  resetBtn.addEventListener('click', function(){ setMode(mode); });
-  tabFocus.addEventListener('click', function(){ setMode('focus'); });
-  tabBreak.addEventListener('click', function(){ setMode('break'); });
-  render();
+
+  function renderRatings(snapshot){
+    var total = 0;
+    var amount = 0;
+    snapshot.forEach(function(doc){
+      var data = doc.data();
+      var rating = Number(data.rating);
+      if (rating >= 1 && rating <= 5){
+        total += rating;
+        amount++;
+      }
+    });
+    var avg = amount ? total / amount : 0;
+    average.textContent = amount ? avg.toFixed(1) : '—';
+    count.textContent = amount;
+    var rounded = Math.round(avg);
+    starsOutput.textContent = '★★★★★'.split('').map(function(_, i){
+      return i < rounded ? '★' : '☆';
+    }).join('');
+  }
+
+  db.collection('ratings').onSnapshot(renderRatings, function(err){
+    console.error('No se pudieron cargar las valoraciones:', err);
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    success.classList.add('hidden');
+    error.classList.add('hidden');
+
+    var rating = Number(valueInput.value);
+    if (!rating){
+      error.textContent = 'Selecciona una puntuación de 1 a 5 estrellas.';
+      error.classList.remove('hidden');
+      return;
+    }
+
+    var btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    var data = {
+      rating: rating,
+      name: document.getElementById('ratingName').value.trim(),
+      comment: document.getElementById('ratingComment').value.trim(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    db.collection('ratings').add(data)
+      .then(function(){
+        form.reset();
+        valueInput.value = '';
+        paintSelected(0);
+        success.classList.remove('hidden');
+      })
+      .catch(function(err){
+        console.error(err);
+        error.textContent = 'No se pudo enviar la valoración. Revisa la conexión y vuelve a intentarlo.';
+        error.classList.remove('hidden');
+      })
+      .finally(function(){
+        btn.disabled = false;
+        btn.textContent = 'Enviar valoración';
+      });
+  });
 })();
